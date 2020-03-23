@@ -1,6 +1,7 @@
 import numpy as np
 import itertools
 import cvxopt
+from matplotlib import pyplot as plt
 from typing import Optional
 
 
@@ -40,13 +41,13 @@ class SVM:
         # Assign the right kernel
         self.kernel = kernel
         if kernel == 'linear':
-            self.kernel_fn = lambda x_i, x_j: x_i.dot(x_j)
+            self.kernel_fn = lambda x_i, x_j: np.dot(x_i, x_j)
         elif kernel == 'rbf':
             self.kernel_fn = lambda x_i, x_j: np.exp(-self.gamma * np.inner(x_i - x_j, x_i - x_j))
         elif kernel == 'poly':
-            self.kernel_fn = lambda x_i, x_j: (gamma * x_i.dot(x_j) + r) ** deg
+            self.kernel_fn = lambda x_i, x_j: (gamma * np.dot(x_i, x_j) + r) ** deg
         elif kernel == 'sigmoid':
-            self.kernel_fn = lambda x_i, x_j: np.tanh(x_i.dot(x_j) + r)
+            self.kernel_fn = lambda x_i, x_j: np.tanh(np.dot(x_i, x_j) + r)
 
         self.is_fit = False
 
@@ -81,7 +82,7 @@ class SVM:
         lambdas = np.ravel(sol['x'])
         # Find indices of the support vectors, which have non-zero Lagrange multipliers, and save the support vectors
         # as instance attributes
-        is_sv = lambdas > 1e-4
+        is_sv = lambdas > 1e-5
         self.sv_X = X[is_sv]
         self.sv_y = y[is_sv]
         self.lambdas = lambdas[is_sv]
@@ -91,13 +92,49 @@ class SVM:
         self.b = 0
         for i in range(len(self.lambdas)):
             self.b += self.sv_y[i]
-            self.b -= np.sum(self.lambdas * self.sv_y[i] * K[sv_index[i], is_sv])
+            self.b -= np.sum(self.lambdas * self.sv_y * K[sv_index[i], is_sv])
         self.b /= len(self.lambdas)
         # Compute w only if the kernel is linear
         if self.kernel == 'linear':
             self.w = np.zeros(n_features)
             for i in range(len(self.lambdas)):
-                self.w[i] = self.lambdas[i] * self.sv_X[i] * self.sv_y[i]
+                self.w += self.lambdas[i] * self.sv_X[i] * self.sv_y[i]
         else:
             self.w = None
         self.is_fit = True
+
+    def project(self, X: np.ndarray) -> float:
+        # If the kernel is linear and 'w' is defined, the value of f(x) is determined by
+        #   f(x) = X * w + b
+        if self.w is not None:
+            return np.dot(X, self.w) + self.b
+        else:
+            # Otherwise, it is determined by
+            #   f(x) = sum_i{sum_sv{lambda_sv y_sv K(x_i, x_sv)}}
+            y_predict = np.zeros(len(X))
+            for i in range(len(X)):
+                for lda, sv_X, sv_y in zip(self.lambdas, self.sv_X, self.sv_y):
+                    y_predict[i] += lda * sv_y * self.kernel_fn(X[i], sv_X)
+            return y_predict + self.b
+
+    def predict(self, X: np.ndarray) -> int:
+        # To predict the point label, only the sign of f(x) is considered
+        return np.sign(self.project(X))
+
+    def plot2D(self, X: np.ndarray, y: np.ndarray):
+        # If the dimension of the data is greater than 2, return
+        if X.shape[1] > 2:
+            print('Cannot plot data, dimension is greater than 2')
+            return
+        # If the kernel is linear and 'w' is defined, the hyperplane can be plotted using 'w' and 'b'
+        if self.w is not None:
+            # Function representing the hyperplane
+            def f(x, w_0, w_1, b):
+                return -(w_0 * x + b)/w_1
+            is_pos = y > 0
+            is_neg = y < 0
+            x_s = np.linspace(np.min(X), np.max(X))
+            plt.plot(x_s, f(x_s, self.w[0], self.w[1], self.b))
+            plt.scatter(X[is_pos, 0], X[is_pos, 1], c='b')
+            plt.scatter(X[is_neg, 0], X[is_neg, 1], c='r')
+            plt.show()

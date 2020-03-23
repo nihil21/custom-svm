@@ -1,7 +1,6 @@
 import argparse
 import numpy as np
 from svm import SVM
-import matplotlib.pyplot as plt
 
 
 def main():
@@ -37,23 +36,20 @@ def main():
         except ValueError:
             print("Cannot convert {0:s} to floating point; default 'r' will be used".format(args['r']))
 
-    n_samples = 30
+    n_samples = 50
     n_features = 2
-    rnd_state = np.random.RandomState(seed=42)
+    rnd_state = np.random.RandomState(seed=35)
     X = rnd_state.rand(n_samples, n_features)
     y = np.ones(n_samples)
 
     # y = x - 0.1
-    for i in range(0, n_samples):
+    for i in range(n_samples):
         if (X[i, 0] - 0.1) > X[i, 1]:
-            plt.scatter(X[i, 0], X[i, 1], c='b')
             y[i] = -y[i]
-        else:
-            plt.scatter(X[i, 0], X[i, 1], c='r')
-    plt.show()
 
     svm = SVM(**svm_params)
     svm.fit(X, y)
+    svm.plot2D(X, y)
 
 
 if __name__ == '__main__':
