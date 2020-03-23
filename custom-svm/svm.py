@@ -16,8 +16,8 @@ class SVM:
         kernel_fn --- kernel function
         gamma --- parameter of the kernel function
         lambdas --- lagrangian multipliers
-        support_vectors_X --- support vectors related to X
-        support_vectors_y --- support vectors related to y
+        sv_X --- support vectors related to X
+        sv_y --- support vectors related to y
         w --- matrix of hyperplane parameters
         b --- hyperplane bias
         is_fit --- boolean variable indicating whether the SVM is fit or not"""
@@ -29,8 +29,8 @@ class SVM:
                  r: Optional[float] = 0.0):
         # Lagrangian multipliers, hyper-parameters and support vectors are initially set to None
         self.lambdas = None
-        self.support_vectors_X = None
-        self.support_vectors_y = None
+        self.sv_X = None
+        self.sv_y = None
         self.w = None
         self.b = None
 
@@ -83,10 +83,21 @@ class SVM:
         # Find indices of the support vectors, which have non-zero Lagrange multipliers, and save the support vectors
         # as instance attributes
         sv_idx = lambdas > 1e-4
-        self.support_vectors_X = X[sv_idx]
-        self.support_vectors_y = y[sv_idx]
+        self.sv_X = X[sv_idx]
+        self.sv_y = y[sv_idx]
         self.lambdas = lambdas[sv_idx]
-        # Compute w and b
-        # TODO
-
+        # Compute b
+        ind = np.arange(len(lambdas))[sv_idx]
+        self.b = 0
+        for i in range(len(self.lambdas)):
+            self.b += self.sv_y[i]
+            self.b -= np.sum(self.lambdas * self.sv_y[i] * K[ind[i], sv_idx])
+        self.b /= len(self.lambdas)
+        # Compute w
+        if self.kernel == 'linear':
+            self.w = np.zeros(n_features)
+            for i in range(len(self.lambdas)):
+                self.w[i] = self.lambdas[i] * self.sv_X[i] * self.sv_y[i]
+        else:
+            self.w = None
         self.is_fit = True
