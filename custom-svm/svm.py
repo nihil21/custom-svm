@@ -73,7 +73,7 @@ class SVM:
         q = cvxopt.matrix(-np.ones(n_samples))
         G = cvxopt.matrix(-np.eye(n_samples))
         h = cvxopt.matrix(np.zeros(n_samples))
-        A = cvxopt.matrix(y.reshape(1, -1))
+        A = cvxopt.matrix(y.reshape(1, -1).astype(np.double))
         b = cvxopt.matrix(np.zeros(1))
 
         # Compute the solution using the quadratic solver
@@ -143,6 +143,12 @@ class SVM:
             plt.plot(x_s, f(x_s, self.w, self.b), 'k')
             plt.plot(x_s, f(x_s, self.w, self.b, -1), 'k--')
             plt.plot(x_s, f(x_s, self.w, self.b, 1), 'k--')
+            plt.scatter(X[is_pos, 0], X[is_pos, 1], c='b')
+            plt.scatter(X[is_neg, 0], X[is_neg, 1], c='r')
+            plt.show()
+        else:
+            is_pos = y > 0
+            is_neg = y < 0
             plt.scatter(X[is_pos, 0], X[is_pos, 1], c='b')
             plt.scatter(X[is_neg, 0], X[is_neg, 1], c='r')
             plt.show()

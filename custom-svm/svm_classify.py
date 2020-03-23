@@ -1,6 +1,6 @@
 import argparse
 from svm import SVM
-from data.linear_data_generator import linear_data_generator
+from data.sample_data_generator import *
 
 RND = 42
 N_SAMP = 200
@@ -9,7 +9,6 @@ N_FEAT = 2
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('-k', '--kernel', required=False, help="kernel type to use ['linear'/'rbf'/'poly'/'sigmoid']")
     ap.add_argument('-g', '--gamma', required=False, help="'gamma' parameter of the kernel")
     ap.add_argument('-d', '--deg', required=False, help="'deg' parameter of the kernel")
     ap.add_argument('-r', '--r', required=False, help="'r' parameter of the kernel")
@@ -17,13 +16,6 @@ def main():
 
     # Argument check
     svm_params = dict()
-    if args['kernel']:
-        if args['kernel'] in ('linear', 'rbf', 'poly', 'sigmoid'):
-            svm_params['kernel'] = args['kernel']
-        else:
-            print("Kernel must be equal to either 'linear', 'rbf', 'poly' or 'sigmoid'; 'linear' will be used.")
-    else:
-        print("'Linear' kernel will be used")
     if args['gamma']:
         try:
             svm_params['gamma'] = float(args['gamma'])
@@ -40,9 +32,19 @@ def main():
         except ValueError:
             print("Cannot convert {0:s} to floating point; default 'r' will be used".format(args['r']))
 
+    print('---------- Linear case ----------')
     X_train, X_test, y_train, y_test = linear_data_generator(n_samples=N_SAMP,
                                                              n_features=N_FEAT,
                                                              random_state=RND)
+    svm = SVM()
+    svm.fit(X_train, y_train)
+    svm.plot2D(X_train, y_train)
+    svm.plot2D(X_test, y_test)
+
+    print('---------- Non-linear case: circles ----------')
+    svm_params['kernel'] = 'rbf'
+    X_train, X_test, y_train, y_test = non_linear_data_generator(n_samples=N_SAMP,
+                                                                 random_state=RND)
     svm = SVM(**svm_params)
     svm.fit(X_train, y_train)
     svm.plot2D(X_train, y_train)
