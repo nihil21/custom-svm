@@ -86,7 +86,10 @@ class SVM:
         self.sv_X = X[is_sv]
         self.sv_y = y[is_sv]
         self.lambdas = lambdas[is_sv]
-        print('{0:d} support vectors out of {1:d} points'.format(len(self.lambdas), n_samples))
+        print('{0:d} support vectors found out of {1:d} data points:'.format(len(self.lambdas), n_samples))
+        for i in range(len(self.lambdas)):
+            print('{0:d}) X: {1}\ty: {2}'.format(i+1, self.sv_X[i], self.sv_y[i]))
+
         # Compute b as 1/N_s sum_i{y_i - sum_sv{lambdas_sv * y_sv * K(x_sv, x_i}}
         sv_index = np.arange(len(lambdas))[is_sv]
         self.b = 0
@@ -112,9 +115,9 @@ class SVM:
             # Otherwise, it is determined by
             #   f(x) = sum_i{sum_sv{lambda_sv y_sv K(x_i, x_sv)}}
             y_predict = np.zeros(len(X))
-            for i in range(len(X)):
+            for x, y in zip(X, y_predict):
                 for lda, sv_X, sv_y in zip(self.lambdas, self.sv_X, self.sv_y):
-                    y_predict[i] += lda * sv_y * self.kernel_fn(X[i], sv_X)
+                    y += lda * sv_y * self.kernel_fn(x, sv_X)
             return y_predict + self.b
 
     def predict(self, X: np.ndarray) -> int:
