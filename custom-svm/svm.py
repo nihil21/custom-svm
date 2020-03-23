@@ -97,11 +97,14 @@ class SVM:
             self.b += self.sv_y[i]
             self.b -= np.sum(self.lambdas * self.sv_y * K[sv_index[i], is_sv])
         self.b /= len(self.lambdas)
+        print('Bias of the hyper-plane: {0:f}'.format(self.b))
         # Compute w only if the kernel is linear
         if self.kernel == 'linear':
             self.w = np.zeros(n_features)
             for i in range(len(self.lambdas)):
                 self.w += self.lambdas[i] * self.sv_X[i] * self.sv_y[i]
+            print('Weights of the hyper-plane:')
+            print(self.w)
         else:
             self.w = None
         self.is_fit = True

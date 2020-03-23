@@ -1,6 +1,10 @@
 import argparse
-import numpy as np
 from svm import SVM
+from data.linear_data_generator import linear_data_generator
+
+RND = 42
+N_SAMP = 200
+N_FEAT = 2
 
 
 def main():
@@ -36,20 +40,13 @@ def main():
         except ValueError:
             print("Cannot convert {0:s} to floating point; default 'r' will be used".format(args['r']))
 
-    n_samples = 50
-    n_features = 2
-    rnd_state = np.random.RandomState(seed=35)
-    X = rnd_state.rand(n_samples, n_features)
-    y = np.ones(n_samples)
-
-    # y = x - 0.1
-    for i in range(n_samples):
-        if (X[i, 0] - 0.1) > X[i, 1]:
-            y[i] = -y[i]
-
+    X_train, X_test, y_train, y_test = linear_data_generator(n_samples=N_SAMP,
+                                                             n_features=N_FEAT,
+                                                             random_state=RND)
     svm = SVM(**svm_params)
-    svm.fit(X, y)
-    svm.plot2D(X, y)
+    svm.fit(X_train, y_train)
+    svm.plot2D(X_train, y_train)
+    svm.plot2D(X_test, y_test)
 
 
 if __name__ == '__main__':
