@@ -81,19 +81,19 @@ class SVM:
         lambdas = np.ravel(sol['x'])
         # Find indices of the support vectors, which have non-zero Lagrange multipliers, and save the support vectors
         # as instance attributes
-        sv_idx = lambdas > 1e-4
-        self.sv_X = X[sv_idx]
-        self.sv_y = y[sv_idx]
-        self.lambdas = lambdas[sv_idx]
+        is_sv = lambdas > 1e-4
+        self.sv_X = X[is_sv]
+        self.sv_y = y[is_sv]
+        self.lambdas = lambdas[is_sv]
         print('{0:d} support vectors out of {1:d} points'.format(len(self.lambdas), n_samples))
-        # Compute b
-        ind = np.arange(len(lambdas))[sv_idx]
+        # Compute b as 1/N_s sum_i{y_i - sum_sv{lambdas_sv * y_sv * K(x_sv, x_i}}
+        sv_index = np.arange(len(lambdas))[is_sv]
         self.b = 0
         for i in range(len(self.lambdas)):
             self.b += self.sv_y[i]
-            self.b -= np.sum(self.lambdas * self.sv_y[i] * K[ind[i], sv_idx])
+            self.b -= np.sum(self.lambdas * self.sv_y[i] * K[sv_index[i], is_sv])
         self.b /= len(self.lambdas)
-        # Compute w
+        # Compute w only if the kernel is linear
         if self.kernel == 'linear':
             self.w = np.zeros(n_features)
             for i in range(len(self.lambdas)):
