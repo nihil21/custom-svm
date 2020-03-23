@@ -67,7 +67,7 @@ class SVM:
         # where P is an n_samples*n_samples matrix, where P[i][j] = y_i y_j K(x_i, x_j)
         K = np.zeros(shape=(n_samples, n_samples))
         for i, j in itertools.product(range(n_samples), range(n_samples)):
-            K = self.kernel_fn(X[i], X[j])
+            K[i, j] = self.kernel_fn(X[i], X[j])
         P = cvxopt.matrix(np.outer(y, y) * K)
         q = cvxopt.matrix(-np.ones(n_samples))
         G = cvxopt.matrix(-np.eye(n_samples))
@@ -77,7 +77,6 @@ class SVM:
 
         # Compute the solution using the quadratic solver
         sol = cvxopt.solvers.qp(P, q, G, h, A, b)
-
         # Extract Lagrange multipliers
         lambdas = np.ravel(sol['x'])
         # Find indices of the support vectors, which have non-zero Lagrange multipliers, and save the support vectors
@@ -86,6 +85,7 @@ class SVM:
         self.sv_X = X[sv_idx]
         self.sv_y = y[sv_idx]
         self.lambdas = lambdas[sv_idx]
+        print('{0:d} support vectors out of {1:d} points'.format(len(self.lambdas), n_samples))
         # Compute b
         ind = np.arange(len(lambdas))[sv_idx]
         self.b = 0
