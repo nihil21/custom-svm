@@ -132,12 +132,14 @@ class SVM:
         # If the kernel is linear and 'w' is defined, the hyperplane can be plotted using 'w' and 'b'
         if self.w is not None:
             # Function representing the hyperplane
-            def f(x, w_0, w_1, b):
-                return -(w_0 * x + b)/w_1
+            def f(x: np.ndarray, w: np.ndarray, b: float, c: Optional[float] = 0):
+                return -(w[0] * x + b - c)/w[1]
             is_pos = y > 0
             is_neg = y < 0
             x_s = np.linspace(np.min(X), np.max(X))
-            plt.plot(x_s, f(x_s, self.w[0], self.w[1], self.b))
+            plt.plot(x_s, f(x_s, self.w, self.b), 'k')
+            plt.plot(x_s, f(x_s, self.w, self.b, -1), 'k--')
+            plt.plot(x_s, f(x_s, self.w, self.b, 1), 'k--')
             plt.scatter(X[is_pos, 0], X[is_pos, 1], c='b')
             plt.scatter(X[is_neg, 0], X[is_neg, 1], c='r')
             plt.show()
