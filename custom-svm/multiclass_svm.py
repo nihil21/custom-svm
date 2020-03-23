@@ -33,7 +33,7 @@ class MulticlassSVM:
         labels = np.unique()
         for label in labels:
             if not label.is_integer():
-                raise ValueError(label + " is not an integer value label")
+                raise ValueError(str(label) + " is not an integer value label")
         self.labels = np.array(labels, dtype=int)
 
         for i in range(0, self.labels.shape[0] - 1):
