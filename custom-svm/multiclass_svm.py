@@ -11,15 +11,21 @@ class MulticlassSVM:
         Given an unseen example, the prediction of the class is computed deploying a voting schema among the classifiers
     """
 
-    def __init__(self, kernel: Optional[str] = 'rbf', gamma: Optional[float] = None):
+    def __init__(self,
+                 kernel: Optional[str] = 'linear',
+                 gamma: Optional[float] = None,
+                 deg: Optional[int] = 3,
+                 r: Optional[float] = 0.0):
         # Note: the number of binary SVM classifiers needed will be known only when the dataset labels will be given
 
         # self.SVMs: list of tuples, each one of 3 elements: (SVM_binary_classifier, 1st_class_label, 2nd_class_label)
         self.SVMs = []
-        # Gamma will be computed during fit process
+        # By default RBF kernel is used
+        self.kernel = kernel
+        # If gamma is None, it will be computed during fit process
         self.gamma = gamma
-        # RBF used as kernel
-        self.kernel = lambda x_i, x_j: np.exp(-self.gamma * np.inner(x_i - x_j))
+        self.deg = deg
+        self.r = r
 
     def fit(self, X: np.ndarray, y: np.ndarray):
         labels = np.unique(y)
@@ -28,7 +34,7 @@ class MulticlassSVM:
                 current_dataset_index = y == labels[i] or y == labels[j]
                 current_X = X[current_dataset_index]
                 current_y = y[current_dataset_index]
-                svm = SVM(kernel=self.kernel, gamma=self.gamma)
+                svm = SVM(kernel=self.kernel, gamma=self.gamma, deg=self.deg, r=self.r)
                 svm.fit(current_X, current_y)
                 svm_tuple = (svm, labels[i], labels[j])
                 self.SVMs.append(svm_tuple)
