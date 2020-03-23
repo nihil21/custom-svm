@@ -9,7 +9,7 @@ def linear_data_generator(n_samples: int,
                           random_state: Optional[int] = None) -> (np.ndarray, np.ndarray, np.ndarray, np.ndarray):
     rnd_state = np.random.RandomState(seed=random_state)
     X = rnd_state.rand(n_samples, n_features)
-    y = np.ones(n_samples)
+    y = np.ones(n_samples, dtype=np.int)
     # Produce the linear dataset s.t. positives and negatives are separated by
     #   y = x - 0.1
     for i in range(n_samples):
