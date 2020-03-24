@@ -20,7 +20,7 @@ def linear_data_generator(n_samples: int,
 
 def non_linear_data_generator(n_samples: int,
                               random_state: Optional[int] = None) -> (np.ndarray, np.ndarray, np.ndarray, np.ndarray):
-    X, y = make_circles(n_samples, noise=0.1, factor=0.4, random_state=random_state)
+    X, y = make_circles(n_samples, noise=0.05, factor=0.4, random_state=random_state)
     # Assign '-1' instead of '0'
     is_zero = y < 1
     y[is_zero] = -1
