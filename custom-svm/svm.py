@@ -27,8 +27,17 @@ class SVM:
                  kernel: Optional[str] = 'linear',
                  gamma: Optional[float] = None,
                  deg: Optional[int] = 3,
-                 r: Optional[float] = 0.0):
-        """Initializes the SVM object by setting the kernel function"""
+                 r: Optional[float] = 0.,
+                 c: Optional[float] = 1.):
+        """Initializes the SVM object by setting the kernel function, its parameters and the soft margin;
+        moreover, it sets to None the matrices of lagrangian multipiers and support vectors.
+            :param kernel: string representing the kernel type ('linear'/'rbf'/'poly'/'sigmoid'); by default it is
+            set to 'linear'
+            :param gamma: optional floating point representing the gamma parameters of the kernel;
+            by default it is 'None', since it will be computed automatically during fit
+            :param deg: optional integer representing the degree of the 'poly' kernel function
+            :param r: optional floating point representing the r parameter of 'poly' and 'sigmoid' kernel functions
+            :param c: float representing the 'softness' of the margin, from 0 ('softest') to 1 ('hard', default)"""
         # Lagrangian multipliers, hyper-parameters and support vectors are initially set to None
         self.lambdas = None
         self.sv_X = None
@@ -50,6 +59,9 @@ class SVM:
         elif kernel == 'sigmoid':
             self.kernel_fn = lambda x_i, x_j: np.tanh(np.dot(x_i, x_j) + r)
 
+        # Soft margin
+        self.c = c
+
         self.is_fit = False
 
     def fit(self, X: np.ndarray, y: np.ndarray):
@@ -61,6 +73,7 @@ class SVM:
         # max{L_D(Lambda)} can be rewritten as
         #   min{1/2 Lambda^T H Lambda - 1^T Lambda}
         #       s.t. -lambda_i <= 0
+        #       s.t. lambda_i <= c
         #       s.t. y^t Lambda = 0
         # This form is conform to the signature of the quadratic solver provided by CVXOPT library:
         #   min{1/2 x^T P x + q^T x}
@@ -72,8 +85,10 @@ class SVM:
             K[i, j] = self.kernel_fn(X[i], X[j])
         P = cvxopt.matrix(np.outer(y, y) * K)
         q = cvxopt.matrix(-np.ones(n_samples))
-        G = cvxopt.matrix(-np.eye(n_samples))
-        h = cvxopt.matrix(np.zeros(n_samples))
+        G = cvxopt.matrix(np.vstack((-np.eye(n_samples),
+                                     np.eye(n_samples))))
+        h = cvxopt.matrix(np.hstack((np.zeros(n_samples),
+                                     np.ones(n_samples) * self.c)))
         A = cvxopt.matrix(y.reshape(1, -1).astype(np.double))
         b = cvxopt.matrix(np.zeros(1))
 

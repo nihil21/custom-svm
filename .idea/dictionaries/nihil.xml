@@ -8,6 +8,7 @@
       <w>mult</w>
       <w>multiclass</w>
       <w>nonlin</w>
+      <w>slin</w>
     </words>
   </dictionary>
 </component>
