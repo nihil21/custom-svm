@@ -64,7 +64,7 @@ class SVM:
 
         self.is_fit = False
 
-    def fit(self, X: np.ndarray, y: np.ndarray):
+    def fit(self, X: np.ndarray, y: np.ndarray, verbose: Optional[bool] = False):
         n_samples, n_features = X.shape
         # If gamma was not specified in '__init__', it is set according to the 'scale' approach
         if not self.gamma:
@@ -106,9 +106,10 @@ class SVM:
         self.sv_X = X[is_sv]
         self.sv_y = y[is_sv]
         self.lambdas = lambdas[is_sv]
-        print('{0:d} support vectors found out of {1:d} data points:'.format(len(self.lambdas), n_samples))
-        for i in range(len(self.lambdas)):
-            print('{0:d}) X: {1}\ty: {2}'.format(i+1, self.sv_X[i], self.sv_y[i]))
+        print('{0:d} support vectors found out of {1:d} data points'.format(len(self.lambdas), n_samples))
+        if verbose:
+            for i in range(len(self.lambdas)):
+                print('{0:d}) X: {1}\ty: {2}'.format(i + 1, self.sv_X[i], self.sv_y[i]))
 
         # Compute b as 1/N_s sum_i{y_i - sum_sv{lambdas_sv * y_sv * K(x_sv, x_i}}
         sv_index = np.arange(len(lambdas))[is_sv]
