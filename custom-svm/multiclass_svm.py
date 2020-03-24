@@ -38,9 +38,9 @@ class MulticlassSVM:
 
         for i in range(0, self.labels.shape[0] - 1):
             for j in range(i + 1, self.labels.shape[0]):
-                current_dataset_index = np.array([True if yi in (self.labels[i] or self.labels[j])
+                current_dataset_index = np.array([True if yi in [self.labels[i], self.labels[j]]
                                                   else False
-                                                  for yi in y])
+                                                  for yi in y.tolist()])
                 current_X = X[current_dataset_index]
                 current_y = np.fromiter((-1 if yi == self.labels[i] else 1 for yi in y[current_dataset_index]), y.dtype)
                 svm = SVM(kernel=self.kernel, gamma=self.gamma, deg=self.deg, r=self.r)
@@ -53,23 +53,29 @@ class MulticlassSVM:
            is assigned to the class which wins the highest number of binary comparisons.
            Anyway, to counteract the possible risk of draw, the predicted value before the application of 'sign'
            function in binary classifiers is stored as well. These latter values are used to deal with draws.
-           For each label i:
-           - voting_schema[0][i] is the number of total comparisons won
-           - voting_schema[1][i] is the cumulative sum of predicted values"""
-        voting_schema = np.zeros([self.labels.shape[0], 2], dtype=float)
+           For each sample j, for each label i:
+           - voting_schema[j][0][i] is the number of total comparisons won
+           - voting_schema[j][1][i] is the cumulative sum of predicted values"""
+
+        voting_schema = np.zeros([len(X), self.labels.shape[0], 2], dtype=float)
         for svm_tuple in self.SVMs:
             prediction = svm_tuple[0].project(X)
-            if prediction < 0:
-                voting_schema[0][svm_tuple[1]] += 1
-                voting_schema[1][svm_tuple[1]] += -1 * prediction
-            else:
-                voting_schema[0][svm_tuple[2]] += 1
-                voting_schema[1][svm_tuple[2]] += prediction
+            for i in range(len(prediction)):
+                if prediction[i] < 0:
+                    voting_schema[i][0][svm_tuple[1]] += 1
+                    voting_schema[i][1][svm_tuple[1]] += -1 * prediction[i]
+                else:
+                    voting_schema[i][0][svm_tuple[2]] += 1
+                    voting_schema[i][1][svm_tuple[2]] += prediction[i]
 
-        sorted_votes = np.sort(voting_schema[0])
-        # if the first two classes received a different number of votes there is no draw
-        if sorted_votes[0] > sorted_votes[1]:
-            return voting_schema[0].argmax()
-        # otherwise return label of the class which has highest cumulative sum of predicted values
-        else:
-            return voting_schema[1].argmax()
+        voting_results = np.zeros(len(voting_schema), dtype=int)
+        for i in range(len(voting_schema)):
+            sorted_votes = np.sort(voting_schema[i][0])
+            # if the first two classes received a different number of votes there is no draw
+            if sorted_votes[0] > sorted_votes[1]:
+                voting_results[i] = voting_schema[i][0].argmax()
+            # otherwise return label of the class which has highest cumulative sum of predicted values
+            else:
+                voting_results[i] = voting_schema[i][1].argmax()
+
+        return voting_results
