@@ -38,7 +38,9 @@ class MulticlassSVM:
 
         for i in range(0, self.labels.shape[0] - 1):
             for j in range(i + 1, self.labels.shape[0]):
-                current_dataset_index = y == self.labels[i] or y == self.labels[j]
+                current_dataset_index = np.array([True if yi in (self.labels[i] or self.labels[j])
+                                                  else False
+                                                  for yi in y])
                 current_X = X[current_dataset_index]
                 current_y = np.fromiter((-1 if yi == self.labels[i] else 1 for yi in y[current_dataset_index]), y.dtype)
                 svm = SVM(kernel=self.kernel, gamma=self.gamma, deg=self.deg, r=self.r)
