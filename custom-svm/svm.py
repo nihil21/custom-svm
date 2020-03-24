@@ -28,6 +28,7 @@ class SVM:
                  gamma: Optional[float] = None,
                  deg: Optional[int] = 3,
                  r: Optional[float] = 0.0):
+        """Initializes the SVM object by setting the kernel function"""
         # Lagrangian multipliers, hyper-parameters and support vectors are initially set to None
         self.lambdas = None
         self.sv_X = None
@@ -113,6 +114,9 @@ class SVM:
         self.is_fit = True
 
     def project(self, X: np.ndarray):
+        # If the model is not fit, raise an exception
+        if not self.is_fit:
+            raise SVMNotFitError
         # If the kernel is linear and 'w' is defined, the value of f(x) is determined by
         #   f(x) = X * w + b
         if self.w is not None:
@@ -130,37 +134,52 @@ class SVM:
         # To predict the point label, only the sign of f(x) is considered
         return np.sign(self.project(X))
 
-    def plot2D(self, X: np.ndarray, y: np.ndarray):
+    def plot2D(self,
+               X: np.ndarray,
+               y: np.ndarray,
+               l_bound: Optional[float] = -1.,
+               h_bound: Optional[float] = 1.):
         # If the dimension of the data is greater than 2, return
         if X.shape[1] > 2:
             print('Cannot plot data, dimension is greater than 2')
             return
+
         # If the kernel is linear and 'w' is defined, the hyperplane can be plotted using 'w' and 'b'
+        is_pos = y > 0
+        is_neg = y < 0
+        # Initialize plot
+        fig, ax = plt.subplots()
+        ax.grid(True, which='both')
+        ax.axhline(y=0, color='k')
+        ax.axvline(x=0, color='k')
+        # Plot training set points
+        ax.plot(X[is_pos, 0], X[is_pos, 1], 'bo')
+        ax.plot(X[is_neg, 0], X[is_neg, 1], 'ro')
+        # Plot support vectors
+        ax.scatter(self.sv_X[:, 0], self.sv_X[:, 1], s=100, c='g')
         if self.w is not None:
             # Function representing the hyperplane
             def f(x: np.ndarray, w: np.ndarray, b: float, c: Optional[float] = 0):
                 return -(w[0] * x + b - c)/w[1]
-            is_pos = y > 0
-            is_neg = y < 0
-            x_s = np.linspace(np.min(X), np.max(X))
-            plt.plot(x_s, f(x_s, self.w, self.b), 'k')
-            plt.plot(x_s, f(x_s, self.w, self.b, -1), 'k--')
-            plt.plot(x_s, f(x_s, self.w, self.b, 1), 'k--')
-            plt.scatter(X[is_pos, 0], X[is_pos, 1], c='b')
-            plt.scatter(X[is_neg, 0], X[is_neg, 1], c='r')
-            plt.show()
-        else:
-            is_pos = y > 0
-            is_neg = y < 0
-            plt.scatter(X[is_pos, 0], X[is_pos, 1], c='b')
-            plt.scatter(X[is_neg, 0], X[is_neg, 1], c='r')
 
-            X1, X2 = np.meshgrid(np.linspace(-1, 1), np.linspace(-1, 1))
+            # Plot the hyperplane
+            x_s = np.linspace(l_bound, h_bound)
+            ax.plot(x_s, f(x_s, self.w, self.b), 'k')
+            ax.plot(x_s, f(x_s, self.w, self.b, -1), 'k--')
+            ax.plot(x_s, f(x_s, self.w, self.b, 1), 'k--')
+
+        else:
+            # Plot the contours of the decision function
+            X1, X2 = np.meshgrid(np.linspace(l_bound, h_bound), np.linspace(l_bound, h_bound))
             X = np.array([[x1, x2] for x1, x2 in zip(np.ravel(X1), np.ravel(X2))])
             Z = self.project(X).reshape(X1.shape)
-            plt.contour(X1, X2, Z, colors='k', linewidths=1, origin='lower')
-            plt.contour(X1, X2, Z + 1, colors='grey', linewidths=1, origin='lower')
-            plt.contour(X1, X2, Z - 1, colors='grey', linewidths=1, origin='lower')
+            ax.contour(X1, X2, Z, [0.], colors='k', linewidths=1, origin='lower')
+            ax.contour(X1, X2, Z + 1, [0.], colors='grey', linewidths=1, origin='lower')
+            ax.contour(X1, X2, Z - 1, [0.], colors='grey', linewidths=1, origin='lower')
 
-            plt.axis("tight")
-            plt.show()
+        plt.show()
+
+
+class SVMNotFitError(Exception):
+    """Exception raised when the 'project' or the 'predict' method of an SVM object is called without fitting
+    the model beforehand."""
