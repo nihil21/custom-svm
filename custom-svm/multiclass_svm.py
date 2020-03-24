@@ -30,7 +30,7 @@ class MulticlassSVM:
 
     def fit(self, X: np.ndarray, y: np.ndarray):
         # check if labels are integers
-        labels = np.unique()
+        labels = np.unique(y)
         for label in labels:
             if not label.is_integer():
                 raise ValueError(str(label) + " is not an integer value label")
@@ -56,7 +56,7 @@ class MulticlassSVM:
            - voting_schema[1][i] is the cumulative sum of predicted values"""
         voting_schema = np.zeros([self.labels.shape[0], 2], dtype=float)
         for svm_tuple in self.SVMs:
-            prediction = svm_tuple[0].predict_value(X)
+            prediction = svm_tuple[0].project(X)
             if prediction < 0:
                 voting_schema[0][svm_tuple[1]] += 1
                 voting_schema[1][svm_tuple[1]] += -1 * prediction
