@@ -30,7 +30,7 @@ class SVM:
                  r: Optional[float] = 0.,
                  c: Optional[float] = 1.):
         """Initializes the SVM object by setting the kernel function, its parameters and the soft margin;
-        moreover, it sets to None the matrices of lagrangian multipiers and support vectors.
+        moreover, it sets to None the matrices of lagrangian multipliers and support vectors.
             :param kernel: string representing the kernel type ('linear'/'rbf'/'poly'/'sigmoid'); by default it is
             set to 'linear'
             :param gamma: optional floating point representing the gamma parameters of the kernel;
@@ -64,7 +64,11 @@ class SVM:
 
         self.is_fit = False
 
-    def fit(self, X: np.ndarray, y: np.ndarray, verbose: Optional[bool] = False):
+    def fit(self, X: np.ndarray, y: np.ndarray, verbosity: Optional[int] = 1):
+        # If 'verbosity' is outside range (0-3), set it to default (1)
+        if verbosity not in {0, 1, 2}:
+            verbosity = 1
+
         n_samples, n_features = X.shape
         # If gamma was not specified in '__init__', it is set according to the 'scale' approach
         if not self.gamma:
@@ -106,11 +110,6 @@ class SVM:
         self.sv_X = X[is_sv]
         self.sv_y = y[is_sv]
         self.lambdas = lambdas[is_sv]
-        print('{0:d} support vectors found out of {1:d} data points'.format(len(self.lambdas), n_samples))
-        if verbose:
-            for i in range(len(self.lambdas)):
-                print('{0:d}) X: {1}\ty: {2}'.format(i + 1, self.sv_X[i], self.sv_y[i]))
-
         # Compute b as 1/N_s sum_i{y_i - sum_sv{lambdas_sv * y_sv * K(x_sv, x_i}}
         sv_index = np.arange(len(lambdas))[is_sv]
         self.b = 0
@@ -118,16 +117,23 @@ class SVM:
             self.b += self.sv_y[i]
             self.b -= np.sum(self.lambdas * self.sv_y * K[sv_index[i], is_sv])
         self.b /= len(self.lambdas)
-        print('Bias of the hyper-plane: {0:.3f}'.format(self.b))
         # Compute w only if the kernel is linear
         if self.kernel == 'linear':
             self.w = np.zeros(n_features)
             for i in range(len(self.lambdas)):
                 self.w += self.lambdas[i] * self.sv_X[i] * self.sv_y[i]
-            print('Weights of the hyper-plane:', self.w)
         else:
             self.w = None
         self.is_fit = True
+
+        # Print results according to verbosity
+        if verbosity in {1, 2}:
+            print('{0:d} support vectors found out of {1:d} data points'.format(len(self.lambdas), n_samples))
+            if verbosity == 2:
+                for i in range(len(self.lambdas)):
+                    print('{0:d}) X: {1}\ty: {2}'.format(i + 1, self.sv_X[i], self.sv_y[i]))
+            print('Bias of the hyper-plane: {0:.3f}'.format(self.b))
+            print('Weights of the hyper-plane:', self.w)
 
     def project(self, X: np.ndarray):
         # If the model is not fit, raise an exception
