@@ -43,7 +43,7 @@ class SVM:
         if kernel == 'linear':
             self.kernel_fn = lambda x_i, x_j: np.dot(x_i, x_j)
         elif kernel == 'rbf':
-            self.kernel_fn = lambda x_i, x_j: np.exp(-self.gamma * np.inner(x_i - x_j, x_i - x_j))
+            self.kernel_fn = lambda x_i, x_j: np.exp(-self.gamma * np.dot(x_i - x_j, x_i - x_j))
         elif kernel == 'poly':
             self.kernel_fn = lambda x_i, x_j: (gamma * np.dot(x_i, x_j) + r) ** deg
         elif kernel == 'sigmoid':
@@ -76,6 +76,10 @@ class SVM:
         A = cvxopt.matrix(y.reshape(1, -1).astype(np.double))
         b = cvxopt.matrix(np.zeros(1))
 
+        # Set CVXOPT options
+        cvxopt.solvers.options['show_progress'] = False
+        cvxopt.solvers.options['maxiters'] = 200
+
         # Compute the solution using the quadratic solver
         sol = cvxopt.solvers.qp(P, q, G, h, A, b)
         # Extract Lagrange multipliers
@@ -97,19 +101,18 @@ class SVM:
             self.b += self.sv_y[i]
             self.b -= np.sum(self.lambdas * self.sv_y * K[sv_index[i], is_sv])
         self.b /= len(self.lambdas)
-        print('Bias of the hyper-plane: {0:f}'.format(self.b))
+        print('Bias of the hyper-plane: {0:.3f}'.format(self.b))
         # Compute w only if the kernel is linear
         if self.kernel == 'linear':
             self.w = np.zeros(n_features)
             for i in range(len(self.lambdas)):
                 self.w += self.lambdas[i] * self.sv_X[i] * self.sv_y[i]
-            print('Weights of the hyper-plane:')
-            print(self.w)
+            print('Weights of the hyper-plane:', self.w)
         else:
             self.w = None
         self.is_fit = True
 
-    def project(self, X: np.ndarray) -> float:
+    def project(self, X: np.ndarray):
         # If the kernel is linear and 'w' is defined, the value of f(x) is determined by
         #   f(x) = X * w + b
         if self.w is not None:
@@ -118,9 +121,9 @@ class SVM:
             # Otherwise, it is determined by
             #   f(x) = sum_i{sum_sv{lambda_sv y_sv K(x_i, x_sv)}}
             y_predict = np.zeros(len(X))
-            for x, y in zip(X, y_predict):
+            for i in range(len(X)):
                 for lda, sv_X, sv_y in zip(self.lambdas, self.sv_X, self.sv_y):
-                    y += lda * sv_y * self.kernel_fn(x, sv_X)
+                    y_predict[i] += lda * sv_y * self.kernel_fn(X[i], sv_X)
             return y_predict + self.b
 
     def predict(self, X: np.ndarray) -> int:
@@ -151,4 +154,13 @@ class SVM:
             is_neg = y < 0
             plt.scatter(X[is_pos, 0], X[is_pos, 1], c='b')
             plt.scatter(X[is_neg, 0], X[is_neg, 1], c='r')
+
+            X1, X2 = np.meshgrid(np.linspace(-1, 1), np.linspace(-1, 1))
+            X = np.array([[x1, x2] for x1, x2 in zip(np.ravel(X1), np.ravel(X2))])
+            Z = self.project(X).reshape(X1.shape)
+            plt.contour(X1, X2, Z, colors='k', linewidths=1, origin='lower')
+            plt.contour(X1, X2, Z + 1, colors='grey', linewidths=1, origin='lower')
+            plt.contour(X1, X2, Z - 1, colors='grey', linewidths=1, origin='lower')
+
+            plt.axis("tight")
             plt.show()
