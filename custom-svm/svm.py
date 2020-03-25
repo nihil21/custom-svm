@@ -177,7 +177,9 @@ class SVM:
             num_plots += 1
         # Initialize plot
         fig, axes = plt.subplots(nrows=int(num_plots/2), ncols=2)
-        print(axes)
+        print(axes.shape)
+        for pair_plot in list(pair_plots):
+            print(pair_plot)
         #ax.grid(True, which='both')
         #ax.axhline(y=0, color='k')
         #ax.axvline(x=0, color='k')
