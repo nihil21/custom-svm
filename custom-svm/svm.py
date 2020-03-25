@@ -57,7 +57,7 @@ class SVM:
         elif kernel == 'rbf':
             self.kernel_fn = lambda x_i, x_j: np.exp(-self.gamma * np.dot(x_i - x_j, x_i - x_j))
         elif kernel == 'poly':
-            self.kernel_fn = lambda x_i, x_j: (gamma * np.dot(x_i, x_j) + r) ** deg
+            self.kernel_fn = lambda x_i, x_j: (self.gamma * np.dot(x_i, x_j) + r) ** deg
         elif kernel == 'sigmoid':
             self.kernel_fn = lambda x_i, x_j: np.tanh(np.dot(x_i, x_j) + r)
 
