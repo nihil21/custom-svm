@@ -15,7 +15,8 @@ class MulticlassSVM:
                  kernel: Optional[str] = 'linear',
                  gamma: Optional[float] = None,
                  deg: Optional[int] = 3,
-                 r: Optional[float] = 0.0):
+                 r: Optional[float] = 0.0,
+                 c: Optional[float] = 1.):
         # self.SVMs: list of tuples, each one of 3 elements: (SVM_binary_classifier, 1st_class_label, 2nd_class_label)
         #            1st_class_label corresponds to sign "-", 2nd_class_label to sign "+"
         # Note: the number of binary SVM classifiers needed will be known only when the dataset labels will be given
@@ -26,7 +27,9 @@ class MulticlassSVM:
         self.gamma = gamma
         self.deg = deg
         self.r = r
+        self.c = c
         self.labels = None
+        self.support_vectors = set()
 
     def fit(self, X: np.ndarray, y: np.ndarray):
         # check if labels are integers
@@ -43,10 +46,13 @@ class MulticlassSVM:
                                                   for yi in y.tolist()])
                 current_X = X[current_dataset_index]
                 current_y = np.fromiter((-1 if yi == self.labels[i] else 1 for yi in y[current_dataset_index]), y.dtype)
-                svm = SVM(kernel=self.kernel, gamma=self.gamma, deg=self.deg, r=self.r)
-                svm.fit(current_X, current_y)
+                svm = SVM(kernel=self.kernel, gamma=self.gamma, deg=self.deg, r=self.r, c=self.c)
+                svm.fit(current_X, current_y, verbosity=0)
+                for sv in svm.sv_X:
+                    self.support_vectors.add(map(tuple, sv))
                 svm_tuple = (svm, self.labels[i], self.labels[j])
                 self.SVMs.append(svm_tuple)
+        print('{0:d} support vectors found out of {1:d} data points'.format(len(self.support_vectors), len(X)))
 
     def predict(self, X: np.ndarray):
         """The voting process is based on the standard predict function for binary SVM classifiers, so the input entry
