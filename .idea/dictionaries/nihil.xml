@@ -3,10 +3,13 @@
     <words>
       <w>binsens</w>
       <w>cvxopt</w>
+      <w>linspaces</w>
       <w>maxiters</w>
+      <w>meshgrid</w>
       <w>mulsens</w>
       <w>mult</w>
       <w>multiclass</w>
+      <w>multiclassification</w>
       <w>nonlin</w>
       <w>sklearn</w>
       <w>slin</w>

@@ -4,6 +4,8 @@ import cvxopt
 from matplotlib import pyplot as plt
 from typing import Optional
 
+from sklearn.model_selection import train_test_split
+
 
 class SVM:
     """Class implementing a Support Vector Machine: instead of minimising the primal function
@@ -135,7 +137,10 @@ class SVM:
             print('Bias of the hyper-plane: {0:.3f}'.format(self.b))
             print('Weights of the hyper-plane:', self.w)
 
-    def project(self, X: np.ndarray):
+    def project(self,
+                X: np.ndarray,
+                i: Optional[int] = None,
+                j: Optional[int] = None):
         # If the model is not fit, raise an exception
         if not self.is_fit:
             raise SVMNotFitError
@@ -147,9 +152,12 @@ class SVM:
             # Otherwise, it is determined by
             #   f(x) = sum_i{sum_sv{lambda_sv y_sv K(x_i, x_sv)}}
             y_predict = np.zeros(len(X))
-            for i in range(len(X)):
+            for k in range(len(X)):
                 for lda, sv_X, sv_y in zip(self.lambdas, self.sv_X, self.sv_y):
-                    y_predict[i] += lda * sv_y * self.kernel_fn(X[i], sv_X)
+                    if i is None or j is None:
+                        y_predict[k] += lda * sv_y * self.kernel_fn(X[k], sv_X)
+                    else:
+                        pass
             return y_predict + self.b
 
     def predict(self, X: np.ndarray) -> int:
@@ -161,24 +169,26 @@ class SVM:
                y: np.ndarray,
                l_bound: Optional[float] = -1.,
                h_bound: Optional[float] = 1.):
-        # If the dimension of the data is greater than 2, return
-        if X.shape[1] > 2:
-            print('Cannot plot data, dimension is greater than 2')
-            return
-
-        # If the kernel is linear and 'w' is defined, the hyperplane can be plotted using 'w' and 'b'
+        # Get number of pairs to plot
+        n_samples, n_features = X.shape
+        pair_plots = itertools.combinations(np.arange(start=0, stop=n_features, step=1, dtype=np.int), 2)
+        num_plots = sum(1 for _ in pair_plots)
+        if num_plots % 2 != 0:
+            num_plots += 1
+        # Initialize plot
+        fig, axes = plt.subplots(nrows=int(num_plots/2), ncols=2)
+        print(axes)
+        #ax.grid(True, which='both')
+        #ax.axhline(y=0, color='k')
+        #ax.axvline(x=0, color='k')
+        # Plot training set points
         is_pos = y > 0
         is_neg = y < 0
-        # Initialize plot
-        fig, ax = plt.subplots()
-        ax.grid(True, which='both')
-        ax.axhline(y=0, color='k')
-        ax.axvline(x=0, color='k')
-        # Plot training set points
-        ax.plot(X[is_pos, 0], X[is_pos, 1], 'bo')
-        ax.plot(X[is_neg, 0], X[is_neg, 1], 'ro')
+        #ax.plot(X[is_pos, 0], X[is_pos, 1], 'bo')
+        #ax.plot(X[is_neg, 0], X[is_neg, 1], 'ro')
         # Plot support vectors
-        ax.scatter(self.sv_X[:, 0], self.sv_X[:, 1], s=100, c='g')
+        #ax.scatter(self.sv_X[:, 0], self.sv_X[:, 1], s=100, c='g')
+        # If the kernel is linear and 'w' is defined, the hyperplane can be plotted using 'w' and 'b'
         if self.w is not None:
             # Function representing the hyperplane
             def f(x: np.ndarray, w: np.ndarray, b: float, c: Optional[float] = 0):
@@ -186,22 +196,43 @@ class SVM:
 
             # Plot the hyperplane
             x_s = np.linspace(l_bound, h_bound)
-            ax.plot(x_s, f(x_s, self.w, self.b), 'k')
-            ax.plot(x_s, f(x_s, self.w, self.b, -1), 'k--')
-            ax.plot(x_s, f(x_s, self.w, self.b, 1), 'k--')
+            #ax.plot(x_s, f(x_s, self.w, self.b), 'k')
+            #ax.plot(x_s, f(x_s, self.w, self.b, -1), 'k--')
+            #ax.plot(x_s, f(x_s, self.w, self.b, 1), 'k--')
 
         else:
             # Plot the contours of the decision function
             X1, X2 = np.meshgrid(np.linspace(l_bound, h_bound), np.linspace(l_bound, h_bound))
             X = np.array([[x1, x2] for x1, x2 in zip(np.ravel(X1), np.ravel(X2))])
-            Z = self.project(X).reshape(X1.shape)
-            ax.contour(X1, X2, Z, [0.], colors='k', linewidths=1, origin='lower')
-            ax.contour(X1, X2, Z + 1, [0.], colors='grey', linewidths=1, origin='lower')
-            ax.contour(X1, X2, Z - 1, [0.], colors='grey', linewidths=1, origin='lower')
+            #Z = self.project(X).reshape(X1.shape)
+            #ax.contour(X1, X2, Z, [0.], colors='k', linewidths=1, origin='lower')
+            #ax.contour(X1, X2, Z + 1, [0.], colors='grey', linewidths=1, origin='lower')
+            #ax.contour(X1, X2, Z - 1, [0.], colors='grey', linewidths=1, origin='lower')
 
-        plt.show()
+        #plt.show()
 
 
 class SVMNotFitError(Exception):
     """Exception raised when the 'project' or the 'predict' method of an SVM object is called without fitting
     the model beforehand."""
+
+
+def read_dataset(f_name: str):
+    X_raw = []
+    y_raw = []
+    with open(f_name, "r") as file:
+        for line in file:
+            features = line.split(',')[:-1]
+            X_raw.append(features)
+            y_raw.append(line.split(',')[-1])
+    X = np.array(X_raw).astype(np.float)
+    y_tmp = np.array(y_raw).astype(np.float)
+    y = np.fromiter((-1 if yi == 0 else 1 for yi in y_tmp), y_tmp.dtype)
+    return train_test_split(X, y, test_size=0.2, random_state=42)
+
+
+f_name_bin = "data/data_2_rooms.txt"
+X_train, X_test, y_train, y_test = read_dataset(f_name_bin)
+svm = SVM(kernel="rbf")
+svm.fit(X_train, y_train)
+svm.plot2D(X_train, y_test)
