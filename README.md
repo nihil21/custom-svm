@@ -21,7 +21,7 @@ The repository is structured in the following way:
 
 The Lagrangian problem for SVM formulated in its dual form:
 
-<img src="https://latex.codecogs.com/gif.latex?max%5C%2C%20F%28%5Cmathbf%7B%5Clambda%7D%29%20%3D%20%5Csum%5Climits_%7Bi%3D1%7D%5E%7Bn%7D%5Calpha_i-%5Cfrac%7B1%7D%7B2%7D%5Csum%5Climits_%7Bi%3D1%7D%5E%7Bn%7D%5Csum%5Climits_%7Bj%3D1%7D%5E%7Bn%7D%5Calpha_i%5Calpha_j%5C%2C%20y_i%5C%2C%20y_j%5Cmathbf%7B%5C%2C%20x_i%5C%2C%20x_j%7D">    
+<img src="https://latex.codecogs.com/gif.latex?max%5C%2C%20F%28%5Cboldsymbol%7B%5Clambda%7D%29%20%3D%20%5Csum%5Climits_%7Bi%3D1%7D%5E%7Bn%7D%5Calpha_i-%5Cfrac%7B1%7D%7B2%7D%5Csum%5Climits_%7Bi%3D1%7D%5E%7Bn%7D%5Csum%5Climits_%7Bj%3D1%7D%5E%7Bn%7D%5Calpha_i%5Calpha_j%5C%2C%20y_i%5C%2C%20y_j%5Cmathbf%7B%5C%2C%20x_i%5C%2C%20x_j%7D">    
 
 It is a quadratic optimization problem that can be solved using the quadratic library `cvxopt`. In details, the signature of the solver .... to be continued 
 
