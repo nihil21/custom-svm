@@ -3,8 +3,7 @@ import itertools
 import cvxopt
 from matplotlib import pyplot as plt
 from typing import Optional
-
-from sklearn.model_selection import train_test_split
+import warnings
 
 
 class SVM:
@@ -103,7 +102,11 @@ class SVM:
         cvxopt.solvers.options['maxiters'] = 200
 
         # Compute the solution using the quadratic solver
-        sol = cvxopt.solvers.qp(P, q, G, h, A, b)
+        try:
+            sol = cvxopt.solvers.qp(P, q, G, h, A, b)
+        except ValueError as e:
+            print('Impossible to fit, try to change kernel parameters; CVXOPT raised Value Error: {0:s}'.format(e))
+            return
         # Extract Lagrange multipliers
         lambdas = np.ravel(sol['x'])
         # Find indices of the support vectors, which have non-zero Lagrange multipliers, and save the support vectors
@@ -154,10 +157,11 @@ class SVM:
             y_predict = np.zeros(len(X))
             for k in range(len(X)):
                 for lda, sv_X, sv_y in zip(self.lambdas, self.sv_X, self.sv_y):
-                    if i is None or j is None:
-                        y_predict[k] += lda * sv_y * self.kernel_fn(X[k], sv_X)
-                    else:
-                        pass
+                    # Extract the two dimensions from sv_X if 'i' and 'j' are specified
+                    if i or j:
+                        sv_X = np.array([sv_X[i], sv_X[j]])
+
+                    y_predict[k] += lda * sv_y * self.kernel_fn(X[k], sv_X)
             return y_predict + self.b
 
     def predict(self, X: np.ndarray) -> int:
@@ -169,72 +173,84 @@ class SVM:
                y: np.ndarray,
                l_bound: Optional[float] = -1.,
                h_bound: Optional[float] = 1.):
-        # Get number of pairs to plot
-        n_samples, n_features = X.shape
-        pair_plots = itertools.combinations(np.arange(start=0, stop=n_features, step=1, dtype=np.int), 2)
-        num_plots = sum(1 for _ in pair_plots)
-        if num_plots % 2 != 0:
-            num_plots += 1
-        # Initialize plot
-        fig, axes = plt.subplots(nrows=int(num_plots/2), ncols=2)
-        print(axes.shape)
-        for pair_plot in list(pair_plots):
-            print(pair_plot)
-        #ax.grid(True, which='both')
-        #ax.axhline(y=0, color='k')
-        #ax.axvline(x=0, color='k')
-        # Plot training set points
+        # Get indexes of positive and negative labels
         is_pos = y > 0
         is_neg = y < 0
-        #ax.plot(X[is_pos, 0], X[is_pos, 1], 'bo')
-        #ax.plot(X[is_neg, 0], X[is_neg, 1], 'ro')
-        # Plot support vectors
-        #ax.scatter(self.sv_X[:, 0], self.sv_X[:, 1], s=100, c='g')
-        # If the kernel is linear and 'w' is defined, the hyperplane can be plotted using 'w' and 'b'
-        if self.w is not None:
-            # Function representing the hyperplane
-            def f(x: np.ndarray, w: np.ndarray, b: float, c: Optional[float] = 0):
-                return -(w[0] * x + b - c)/w[1]
 
-            # Plot the hyperplane
-            x_s = np.linspace(l_bound, h_bound)
-            #ax.plot(x_s, f(x_s, self.w, self.b), 'k')
-            #ax.plot(x_s, f(x_s, self.w, self.b, -1), 'k--')
-            #ax.plot(x_s, f(x_s, self.w, self.b, 1), 'k--')
+        # Get number of pairs to plot
+        n_samples, n_features = X.shape
+        pair_plots = list(itertools.combinations(np.arange(start=0, stop=n_features, step=1, dtype=np.int), 2))
+        num_plots = len(pair_plots)
+        if num_plots % 2 != 0:
+            num_plots += 1
 
+        # Check number of features
+        if n_features > 2:
+            # If the number of features is higher than 2, initialize a grid of subplots
+            fig, ax = plt.subplots(nrows=int(num_plots/2), ncols=2, figsize=(15, 30))
+        elif n_features == 2:
+            # If the number of features is 2, draw a single plot and wrap it in a fake grid
+            fig, ax = plt.subplots()
+            ax = np.array([[ax, 0],
+                           [0, 0]])
         else:
-            # Plot the contours of the decision function
-            X1, X2 = np.meshgrid(np.linspace(l_bound, h_bound), np.linspace(l_bound, h_bound))
-            X = np.array([[x1, x2] for x1, x2 in zip(np.ravel(X1), np.ravel(X2))])
-            #Z = self.project(X).reshape(X1.shape)
-            #ax.contour(X1, X2, Z, [0.], colors='k', linewidths=1, origin='lower')
-            #ax.contour(X1, X2, Z + 1, [0.], colors='grey', linewidths=1, origin='lower')
-            #ax.contour(X1, X2, Z - 1, [0.], colors='grey', linewidths=1, origin='lower')
+            # Otherwise, return
+            print('Number of dimensions must be 2 or higher.')
+            return
 
-        #plt.show()
+        # Initialize plot counters
+        p_i, p_j = 0, 0
+
+        # Iterate over dimensions
+        for i, j in pair_plots:
+            # Initialize subplot
+            ax[p_i, p_j].title.set_text('Dimensions {0:d}, {1:d}'.format(i + 1, j + 1))
+            ax[p_i, p_j].grid(True, which='both')
+            ax[p_i, p_j].axhline(y=0, color='k')
+            ax[p_i, p_j].axvline(x=0, color='k')
+
+            # Plot training set points
+            ax[p_i, p_j].plot(X[is_pos, i], X[is_pos, j], 'bo')
+            ax[p_i, p_j].plot(X[is_neg, i], X[is_neg, j], 'ro')
+            # Plot support vectors
+            ax[p_i, p_j].scatter(self.sv_X[:, i], self.sv_X[:, j], s=100, c='g')
+
+            # If the kernel is linear and 'w' is defined, the hyperplane can be plotted using 'w' and 'b'
+            if self.w is not None:
+                # Function representing the hyperplane
+                def f(x: np.ndarray, w_0: float, w_1: float, b: float, c: Optional[float] = 0):
+                    return -(w_0 * x + b - c)/w_1
+
+                # Plot the hyperplane
+                x_s = np.linspace(l_bound, h_bound)
+                ax[p_i, p_j].plot(x_s, f(x_s, self.w[i], self.w[j], self.b), 'k')
+                ax[p_i, p_j].plot(x_s, f(x_s, self.w[i], self.w[j], self.b, -1), 'k--')
+                ax[p_i, p_j].plot(x_s, f(x_s, self.w[i], self.w[j], self.b, 1), 'k--')
+
+            else:
+                # Plot the contours of the decision function
+                X1, X2 = np.meshgrid(np.linspace(l_bound, h_bound), np.linspace(l_bound, h_bound))
+                Xs = np.array([[x1, x2] for x1, x2 in zip(np.ravel(X1), np.ravel(X2))])
+                Z = self.project(Xs, i, j).reshape(X1.shape)
+
+                # Suppress warnings and reactivate them after plotting contour
+                warnings.filterwarnings('ignore')
+                ax[p_i, p_j].contour(X1, X2, Z, [0.], colors='k', linewidths=1, origin='lower')
+                ax[p_i, p_j].contour(X1, X2, Z + 1, [0.], colors='grey', linewidths=1, origin='lower')
+                ax[p_i, p_j].contour(X1, X2, Z - 1, [0.], colors='grey', linewidths=1, origin='lower')
+                warnings.filterwarnings('default')
+
+            ax[p_i, p_j].set(xlim=(l_bound, h_bound))
+
+            # Increment subplot counters
+            if p_j == 0:
+                p_j += 1
+            else:
+                p_i += 1
+                p_j -= 1
+        fig.show()
 
 
 class SVMNotFitError(Exception):
     """Exception raised when the 'project' or the 'predict' method of an SVM object is called without fitting
     the model beforehand."""
-
-
-def read_dataset(f_name: str):
-    X_raw = []
-    y_raw = []
-    with open(f_name, "r") as file:
-        for line in file:
-            features = line.split(',')[:-1]
-            X_raw.append(features)
-            y_raw.append(line.split(',')[-1])
-    X = np.array(X_raw).astype(np.float)
-    y_tmp = np.array(y_raw).astype(np.float)
-    y = np.fromiter((-1 if yi == 0 else 1 for yi in y_tmp), y_tmp.dtype)
-    return train_test_split(X, y, test_size=0.2, random_state=42)
-
-
-f_name_bin = "data/data_2_rooms.txt"
-X_train, X_test, y_train, y_test = read_dataset(f_name_bin)
-svm = SVM(kernel="rbf")
-svm.fit(X_train, y_train)
-svm.plot2D(X_train, y_test)
