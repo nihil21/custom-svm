@@ -216,7 +216,7 @@ class SVM:
                 y_max = np.max(X[:, j]) + 1
 
             # Initialize subplot
-            ax[p_i, p_j].title.set_text('Dimensions {0:d}, {1:d}'.format(i + 1, j + 1))
+            ax[p_i, p_j].title.set_text('Dimensions {0:d}, {1:d}'.format(i, j))
             ax[p_i, p_j].grid(True, which='both')
             ax[p_i, p_j].axhline(y=0, color='k')
             ax[p_i, p_j].axvline(x=0, color='k')
