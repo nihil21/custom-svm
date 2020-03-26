@@ -39,14 +39,19 @@ subject to:
 
 ![LaTeX image not found :(](res/const4.gif?raw=true)
 
-Let **H** be a matrix such that H<sub>i,j</sub> = y<sub>i</sub> y<sub>j</sub> **x<sub>i</sub> x<sub>j</sub>** , then the optimization becomes:
+Let **H** be a matrix such that H<sub>i,j</sub> = y<sub>i</sub> y<sub>j</sub> **x<sub>i</sub> x<sub>j</sub>** , then the function to optimize becomes:
 
 ![LaTeX image not found :(](res/dual_h.gif?raw=true)
 
-subject to the same constraints shown previously (need modific.).
+We then convert the sums into vector form and multiply both the objective and the constraint by −1, which turns this into a minimization problem and reverses the inequality in constaints. The optimization problem can be written as:
 
-In more details, the solver optimize a quadratic problem written in the form:
+![LaTeX image not found :(](res/dual_h2.gif?raw=true)
 
+subject to:  
+
+![LaTeX image not found :(](res/const5.gif?raw=true)   
+
+![LaTeX image not found :(](res/const6.gif?raw=true)
 
 -----------------------------------------------
 link latex generator: https://www.codecogs.com/latex/eqneditor.php
