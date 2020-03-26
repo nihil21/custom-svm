@@ -171,8 +171,10 @@ class SVM:
     def plot2D(self,
                X: np.ndarray,
                y: np.ndarray,
-               l_bound: Optional[float] = -1.,
-               h_bound: Optional[float] = 1.):
+               x_min: Optional[float] = None,
+               x_max: Optional[float] = None,
+               y_min: Optional[float] = None,
+               y_max: Optional[float] = None):
         # Get indexes of positive and negative labels
         is_pos = y > 0
         is_neg = y < 0
@@ -203,6 +205,16 @@ class SVM:
 
         # Iterate over dimensions
         for i, j in pair_plots:
+            # If bounds are not specified, compute them from maximum and minimum data
+            if not x_min:
+                x_min = np.min(X[:, i]) - 1
+            if not x_max:
+                x_max = np.max(X[:, i]) + 1
+            if not y_min:
+                y_min = np.min(X[:, j]) - 1
+            if not y_max:
+                y_max = np.max(X[:, j]) + 1
+
             # Initialize subplot
             ax[p_i, p_j].title.set_text('Dimensions {0:d}, {1:d}'.format(i + 1, j + 1))
             ax[p_i, p_j].grid(True, which='both')
@@ -222,14 +234,14 @@ class SVM:
                     return -(w_0 * x + b - c)/w_1
 
                 # Plot the hyperplane
-                x_s = np.linspace(l_bound, h_bound)
+                x_s = np.linspace(x_min, x_max)
                 ax[p_i, p_j].plot(x_s, f(x_s, self.w[i], self.w[j], self.b), 'k')
                 ax[p_i, p_j].plot(x_s, f(x_s, self.w[i], self.w[j], self.b, -1), 'k--')
                 ax[p_i, p_j].plot(x_s, f(x_s, self.w[i], self.w[j], self.b, 1), 'k--')
 
             else:
                 # Plot the contours of the decision function
-                X1, X2 = np.meshgrid(np.linspace(l_bound, h_bound), np.linspace(l_bound, h_bound))
+                X1, X2 = np.meshgrid(np.linspace(x_min, x_max), np.linspace(y_min, y_max))
                 Xs = np.array([[x1, x2] for x1, x2 in zip(np.ravel(X1), np.ravel(X2))])
                 Z = self.project(Xs, i, j).reshape(X1.shape)
 
@@ -240,7 +252,7 @@ class SVM:
                 ax[p_i, p_j].contour(X1, X2, Z - 1, [0.], colors='grey', linewidths=1, origin='lower')
                 warnings.filterwarnings('default')
 
-            ax[p_i, p_j].set(xlim=(l_bound, h_bound))
+            ax[p_i, p_j].set(xlim=(x_min, x_max), ylim=(y_min, y_max))
 
             # Increment subplot counters
             if p_j == 0:
@@ -248,7 +260,7 @@ class SVM:
             else:
                 p_i += 1
                 p_j -= 1
-        fig.show()
+        plt.show()
 
 
 class SVMNotFitError(Exception):
