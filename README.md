@@ -61,6 +61,16 @@ It is now necessary to convert the numpy arrays that express the optimization pr
  - **A**:=**y** the label vector of size m×1
  - b:=0 a scalar
 
+\[...\]
+
+### SVM for Multiclass Classification
+
+The module [`multiclass_svm.py`](https://github.com/nihil21/custom-svm/blob/master/custom-svm/multiclass_svm.py) contains the implementation of Support Vector Machine for multi-classification purposes based on **one-vs-one strategy**.  
+It offers full support to **kernel functions** and **soft margin**, in fact the signature of its `__init__` method is the same of the binary `SVM`.    
+Given N different classes to classify, the algorithm provides N*(N-1)/2 SVM binary classifiers from the module [`svm.py`](https://github.com/nihil21/custom-svm/blob/master/custom-svm/svm.py).   
+**Each classifier** is **trained** to correctly classify **2 of the N** given **classes**. In the training process there are used only the entries in the dataset to which it corresponds a label of the 2 classes.   
+Given an unseen example, the **prediction** of the class is computed deploying a **voting schema** among the binary `SVM` classifiers.   
+The voting process is based on the standard `predict` function for binary `SVM` classifiers, so the tested entry is assigned to the class which wins the highest number of binary comparisons. In addition, it is available a mechanism to **counteract** the possible risk of **draw** in voting, based on the raw values predicted by the binary classifiers before the application of 'sign' function.
 
 -----------------------------------------------
 link latex generator: https://www.codecogs.com/latex/eqneditor.php
