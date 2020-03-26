@@ -209,6 +209,82 @@ def sensor_input_from_spatial_position(x, y, z, sensors):
     return sensors_input
 
 
+# Hypothesis: max_x, max_y (in meters) dimension of the plant of the building, each floor is 3 meters height
+def random_rooms(max_x: int,
+                 max_y: int,
+                 floor_number: int,
+                 rooms_temperature: float):
+
+    # It is reasonable to set as room minimum dimension 3 meters square
+    if max_x % 3 != 0 or max_y % 3 != 0:
+        print("max_x and max_y must be multiple of 3")
+        exit(1)
+
+    # conversion: max_x is max number of room along x axis, max_y along y axis
+    max_x = int(max_x / 3)
+    max_y = int(max_y / 3)
+
+    # rooms_temperature in [0,1]: the higher the value, the higher the room number
+    if rooms_temperature < 0 or rooms_temperature > 1:
+        print("rooms_temperature in [0,1]")
+        exit(2)
+
+    rooms = np.empty([floor_number, max_x, max_y], dtype=int)
+
+    # rooms initialization
+    name = 0
+    for floor in range(floor_number):
+        for x in range(max_x):
+            for y in range(max_y):
+                temperature = rnd.random()
+                # new room
+                if temperature < rooms_temperature:
+                    name += 1
+                    rooms[floor, x, y] = name
+                # already existing room
+                else:
+                    if rnd.random() < 0.5:
+                        if x - 1 >= 0:
+                            tmp_name = rooms[floor, x - 1, y]
+                        elif y - 1 >= 0:
+                            tmp_name = rooms[floor, x, y - 1]
+                        else:
+                            name += 1
+                            tmp_name = name
+                    else:
+                        if y - 1 >= 0:
+                            tmp_name = rooms[floor, x, y - 1]
+                        elif x - 1 >= 0:
+                            tmp_name = rooms[floor, x - 1, y]
+                        else:
+                            name += 1
+                            tmp_name = name
+                    rooms[floor, x, y] = tmp_name
+        # different floor, different room
+        name += 1
+
+    return rooms, name, max_x, max_y
+
+
+def random_palette(palette_dimension: int):
+
+    color_array_1 = np.arange(0, palette_dimension, 1, dtype=float)
+    np.random.shuffle(color_array_1)
+    color_array_2 = np.arange(0, palette_dimension, 1, dtype=float)
+    np.random.shuffle(color_array_2)
+    color_array_3 = np.arange(0, palette_dimension, 1, dtype=float)
+    np.random.shuffle(color_array_3)
+
+    colors_np = np.empty([palette_dimension, 3], dtype=float)
+    for i in range(0, palette_dimension):
+        colors_np[i] = np.array(
+            [color_array_1[i] / palette_dimension,
+             color_array_2[i] / palette_dimension,
+             color_array_3[i] / palette_dimension])
+
+    return colors_np
+
+
 if __name__ == "__main__":
 
     # rooms, name, max_x, max_y, floor_number = create_2_rooms()
