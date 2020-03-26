@@ -21,45 +21,37 @@ The repository is structured in the following way:
 
 The Lagrangian problem for SVM formulated in its dual form:
 
-<img src="https://latex.codecogs.com/gif.latex?%5Cmax_%7B%5Clambda%7D%5C%2C%20F%28%5Cboldsymbol%7B%5Clambda%7D%29%20%3D%20%5Csum%5Climits_%7Bi%3D1%7D%5E%7Bn%7D%5Clambda_i-%5Cfrac%7B1%7D%7B2%7D%5Csum%5Climits_%7Bi%3D1%7D%5E%7Bn%7D%5Csum%5Climits_%7Bj%3D1%7D%5E%7Bn%7D%5Clambda_i%5Clambda_j%5C%2C%20y_i%5C%2C%20y_j%3C%20%5Cmathbf%7B%5C%2C%20x_i%5C%2C%20x_j%7D%20%3E">
+![LaTeX image not found :(](res/dual.gif?raw=true)
 
-subject to:
+subject to:   
 
-<img src="https://latex.codecogs.com/gif.latex?%5Clambda_i%20%5Cgeq%200%2C%5C%3A%20i%3D%201%5C%2C%20...%5C%20n">
+![LaTeX image not found :(](res/const1.gif?raw=true)
 
-<img src="https://latex.codecogs.com/gif.latex?%5Csum%5Climits_%7Bi%3D1%7D%5E%7Bn%7D%5Clambda_i%5C%2C%20y_i%20%3D%200">
+![LaTeX image not found :(](res/const2.gif?raw=true)    
 
 It is a quadratic optimization problem that can be solved using the quadratic library `cvxopt` in python, so it is necessary to match the solver's API which, according to the documentation, is of the form:
 
-<img src="https://latex.codecogs.com/gif.latex?%5Cmin_%7Bx%7D%5C%2C%20F%28%5Cboldsymbol%7Bx%7D%29%20%3D%20%5Cfrac%7B1%7D%7B2%7D%5Cboldsymbol%7Bx%7D%5ET%5Cmathbf%7BP%7D%5Cboldsymbol%7Bx%7D%5C%2C%20&plus;%5C%2C%20%5Cboldsymbol%7Bq%7D%5ET%5Cboldsymbol%7Bx%7D">
+![LaTeX image not found :(](res/cvxopt_sign.gif?raw=true)
 
 subject to:  
 
-<img src="https://latex.codecogs.com/gif.latex?%5Cboldsymbol%7BA%20x%7D%20%3D%20%5Cboldsymbol%7Bb%7D">
+![LaTeX image not found :(](res/const3.gif?raw=true)   
 
-<img src="https://latex.codecogs.com/gif.latex?%5Cboldsymbol%7BG%20x%7D%20%5Cleq%20%5Cboldsymbol%7Bh%7D">
+![LaTeX image not found :(](res/const4.gif?raw=true)
 
+Let **H** be a matrix such that H<sub>i,j</sub> = y<sub>i</sub> y<sub>j</sub> **x<sub>i</sub> x<sub>j</sub>** , then the optimization becomes:
 
-Let text_bf{H} be a matrix such that <img src="https://latex.codecogs.com/gif.latex?H_i_%2C_j%5C%2C%20%3D%5C%2C%20y_i%5C%2C%20y_j%5C%2C%20%3C%20%5Cmathbf%7B%5C%2C%20x_i%5C%2C%20x_j%7D%20%3E"> , then the optimization becomes:
-
-<img src="https://latex.codecogs.com/gif.latex?%5Cmax_%7B%5Clambda%7D%5C%2C%20F%28%5Cboldsymbol%7B%5Clambda%7D%29%20%3D%20%5Csum%5Climits_%7Bi%3D1%7D%5E%7Bn%7D%5Clambda_i-%5Cfrac%7B1%7D%7B2%7D%5Cboldsymbol%7B%5Clambda%7D%5ET%5Cmathbf%7BH%7D%5Cboldsymbol%7B%5Clambda%7D">
+![LaTeX image not found :(](res/dual_h.gif?raw=true)
 
 subject to the same constraints shown previously (need modific.).
 
-
-
-
-. In more details, the solver optimize a quadratic problem written in the form:
-
-<img src="https://latex.codecogs.com/gif.latex?max%5C%2C%20F%28%5Cboldsymbol%7B%5Clambda%7D%29%20%3D%20%5Csum%5Climits_%7Bi%3D1%7D%5E%7Bn%7D%5Clambda_i-%5Cfrac%7B1%7D%7B2%7D%5Csum%5Climits_%7Bi%3D1%7D%5E%7Bn%7D%5Csum%5Climits_%7Bj%3D1%7D%5E%7Bn%7D%5Clambda_i%5Clambda_j%5C%2C%20y_i%5C%2C%20y_j%5Cmathbf%7B%5C%2C%20x_i%5C%2C%20x_j%7D">
+In more details, the solver optimize a quadratic problem written in the form:
 
 
 -----------------------------------------------
 link latex generator: https://www.codecogs.com/latex/eqneditor.php
 
 raw formula in order:
-
-![Image not found :(](custom-svm/tree/master/res/dual.png?raw=true)
 
 \max_{\lambda}\, F(\boldsymbol{\lambda}) = \sum\limits_{i=1}^{n}\lambda_i-\frac{1}{2}\sum\limits_{i=1}^{n}\sum\limits_{j=1}^{n}\lambda_i\lambda_j\, y_i\, y_j< \mathbf{\, x_i\, x_j} > 
 
