@@ -21,26 +21,59 @@ The repository is structured in the following way:
 
 The Lagrangian problem for SVM formulated in its dual form:
 
-<img src="https://latex.codecogs.com/gif.latex?max%5C%2C%20F%28%5Cboldsymbol%7B%5Clambda%7D%29%20%3D%20%5Csum%5Climits_%7Bi%3D1%7D%5E%7Bn%7D%5Clambda_i-%5Cfrac%7B1%7D%7B2%7D%5Csum%5Climits_%7Bi%3D1%7D%5E%7Bn%7D%5Csum%5Climits_%7Bj%3D1%7D%5E%7Bn%7D%5Clambda_i%5Clambda_j%5C%2C%20y_i%5C%2C%20y_j%5Cmathbf%7B%5C%2C%20x_i%5C%2C%20x_j%7D">
+<img src="https://latex.codecogs.com/gif.latex?%5Cmax_%7B%5Clambda%7D%5C%2C%20F%28%5Cboldsymbol%7B%5Clambda%7D%29%20%3D%20%5Csum%5Climits_%7Bi%3D1%7D%5E%7Bn%7D%5Clambda_i-%5Cfrac%7B1%7D%7B2%7D%5Csum%5Climits_%7Bi%3D1%7D%5E%7Bn%7D%5Csum%5Climits_%7Bj%3D1%7D%5E%7Bn%7D%5Clambda_i%5Clambda_j%5C%2C%20y_i%5C%2C%20y_j%3C%20%5Cmathbf%7B%5C%2C%20x_i%5C%2C%20x_j%7D%20%3E">
 
 subject to:
 
 <img src="https://latex.codecogs.com/gif.latex?%5Clambda_i%20%5Cgeq%200%2C%5C%3A%20i%3D%201%5C%2C%20...%5C%20n">
 
-<img src="https://latex.codecogs.com/gif.latex?%5Clambda_i%20%5Cgeq%200%2C%5C%3A%20i%3D%201%5C%2C%20...%5C%20n">
+<img src="https://latex.codecogs.com/gif.latex?%5Csum%5Climits_%7Bi%3D1%7D%5E%7Bn%7D%5Clambda_i%5C%2C%20y_i%20%3D%200">
+
+It is a quadratic optimization problem that can be solved using the quadratic library `cvxopt` in python, so it is necessary to match the solver's API which, according to the documentation, is of the form:
+
+<img src="https://latex.codecogs.com/gif.latex?%5Cmin_%7Bx%7D%5C%2C%20F%28%5Cboldsymbol%7Bx%7D%29%20%3D%20%5Cfrac%7B1%7D%7B2%7D%5Cboldsymbol%7Bx%7D%5ET%5Cmathbf%7BP%7D%5Cboldsymbol%7Bx%7D%5C%2C%20&plus;%5C%2C%20%5Cboldsymbol%7Bq%7D%5ET%5Cboldsymbol%7Bx%7D">
+
+subject to:  
+
+<img src="https://latex.codecogs.com/gif.latex?%5Cboldsymbol%7BA%20x%7D%20%3D%20%5Cboldsymbol%7Bb%7D">
+
+<img src="https://latex.codecogs.com/gif.latex?%5Cboldsymbol%7BG%20x%7D%20%5Cleq%20%5Cboldsymbol%7Bh%7D">
 
 
-It is a quadratic optimization problem that can be solved using the quadratic library `cvxopt`. In details, the signature of the solver .... to be continued 
+Let text_bf{H} be a matrix such that <img src="https://latex.codecogs.com/gif.latex?H_i_%2C_j%5C%2C%20%3D%5C%2C%20y_i%5C%2C%20y_j%5C%2C%20%3C%20%5Cmathbf%7B%5C%2C%20x_i%5C%2C%20x_j%7D%20%3E"> , then the optimization becomes:
+
+<img src="https://latex.codecogs.com/gif.latex?%5Cmax_%7B%5Clambda%7D%5C%2C%20F%28%5Cboldsymbol%7B%5Clambda%7D%29%20%3D%20%5Csum%5Climits_%7Bi%3D1%7D%5E%7Bn%7D%5Clambda_i-%5Cfrac%7B1%7D%7B2%7D%5Cboldsymbol%7B%5Clambda%7D%5ET%5Cmathbf%7BH%7D%5Cboldsymbol%7B%5Clambda%7D">
+
+subject to the same constraints shown previously (need modific.).
+
+
+
+
+. In more details, the solver optimize a quadratic problem written in the form:
+
+<img src="https://latex.codecogs.com/gif.latex?max%5C%2C%20F%28%5Cboldsymbol%7B%5Clambda%7D%29%20%3D%20%5Csum%5Climits_%7Bi%3D1%7D%5E%7Bn%7D%5Clambda_i-%5Cfrac%7B1%7D%7B2%7D%5Csum%5Climits_%7Bi%3D1%7D%5E%7Bn%7D%5Csum%5Climits_%7Bj%3D1%7D%5E%7Bn%7D%5Clambda_i%5Clambda_j%5C%2C%20y_i%5C%2C%20y_j%5Cmathbf%7B%5C%2C%20x_i%5C%2C%20x_j%7D">
 
 
 -----------------------------------------------
 link latex generator: https://www.codecogs.com/latex/eqneditor.php
 
-dual
+raw formula in order:
 
-max\, F(\boldsymbol{\lambda}) = \sum\limits_{i=1}^{n}\lambda_i-\frac{1}{2}\sum\limits_{i=1}^{n}\sum\limits_{j=1}^{n}\lambda_i\lambda_j\, y_i\, y_j\mathbf{\, x_i\, x_j}
+![Image not found :(](custom-svm/tree/master/res/dual.png?raw=true)
+
+\max_{\lambda}\, F(\boldsymbol{\lambda}) = \sum\limits_{i=1}^{n}\lambda_i-\frac{1}{2}\sum\limits_{i=1}^{n}\sum\limits_{j=1}^{n}\lambda_i\lambda_j\, y_i\, y_j< \mathbf{\, x_i\, x_j} > 
 
 \lambda_i \geq 0,\: i= 1\, ...\ n
+
+\min_{x}\, F(\boldsymbol{x}) = \frac{1}{2}\boldsymbol{x}^T\mathbf{P}\boldsymbol{x}\, +\, \boldsymbol{q}^T\boldsymbol{x}
+
+\boldsymbol{G x} \leq  \boldsymbol{h}
+
+\boldsymbol{A x} =  \boldsymbol{b}
+
+H_i_,_j\, =\, y_i\, y_j\, < \mathbf{\, x_i\, x_j} >
+
+\max_{\lambda}\, F(\boldsymbol{\lambda}) = \sum\limits_{i=1}^{n}\lambda_i-\frac{1}{2}\boldsymbol{\lambda}^T\mathbf{H}\boldsymbol{\lambda}
 
 ### Workflow
 - The SVM model is initially created by specifying the type of kernel ('rbf'/'poly'/'sigmoid') and the value of the gamma parameter (by default, 'rbf' is used with gamma computed automatically during the 'fit' process).
