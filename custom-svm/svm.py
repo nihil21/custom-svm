@@ -192,7 +192,7 @@ class SVM:
             fig, ax = plt.subplots(nrows=int(num_plots/2), ncols=2, figsize=(15, 30))
         elif n_features == 2:
             # If the number of features is 2, draw a single plot and wrap it in a fake grid
-            fig, ax = plt.subplots()
+            fig, ax = plt.subplots(figsize=(15, 10))
             ax = np.array([[ax, 0],
                            [0, 0]])
         else:
