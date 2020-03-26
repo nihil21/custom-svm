@@ -51,7 +51,16 @@ subject to:
 
 ![LaTeX image not found :(](res/const5.gif?raw=true)   
 
-![LaTeX image not found :(](res/const6.gif?raw=true)
+![LaTeX image not found :(](res/const6.gif?raw=true)    
+
+It is now necessary to convert the numpy arrays that express the optimization problem accordingly to `cvxopt` format. Using the same notation as in the documentation, this gives:  
+ - **P**:=**H** a matrix of size m×m
+ - **q**:=**−1⃗**  a vector of size m×1
+ - **G**:=−diag[1] a diagonal matrix of -1s of size m×m
+ - **h**:=**0⃗**  a vector of zeros of size m×1
+ - **A**:=**y** the label vector of size m×1
+ - b:=0 a scalar
+
 
 -----------------------------------------------
 link latex generator: https://www.codecogs.com/latex/eqneditor.php
