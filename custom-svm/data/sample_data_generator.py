@@ -17,8 +17,12 @@ def linear_data_generator(n_samples: int,
 def semi_linear_data_generator(n_samples: int,
                                n_features: int,
                                random_state: Optional[int] = None) -> (np.ndarray, np.ndarray, np.ndarray, np.ndarray):
-    X, y = make_blobs(n_samples, n_features, centers=[[-2, 2], [2, -2]], cluster_std=1.5, random_state=random_state)
+    X, y = make_blobs(n_samples, n_features, centers=[[-2, 2], [2, -2]], cluster_std=0.7, random_state=random_state)
     # Assign '-1' instead of '0'
+    X[-1] = np.array([0.5, - 0.7])
+    X[-2] = np.array([0.7, - 0.6])
+    y[-1] = 0
+    y[-2] = 0
     is_zero = y < 1
     y[is_zero] = -1
     return train_test_split(X, y, random_state=random_state)
