@@ -15,11 +15,25 @@ The repository is structured in the following way:
  - the module [`custom-svm/svm.py`](https://github.com/nihil21/custom-svm/blob/master/custom-svm/svm.py) contains the implementation of SVM for binary classification, with support to kernel functions and soft margin.  
  - the module [`custom-svm/multiclass_svm.py`](https://github.com/nihil21/custom-svm/blob/master/custom-svm/multiclass_svm.py) contains the implementation of SVM for multiclass classification.
  - the notebook [`custom-svm/svm_usecase.ipynb`](https://github.com/nihil21/custom-svm/blob/master/custom-svm/svm_usecase.ipynb) shows the usage of the SVM for many different purposes.
- - the package [`custom-svm/data`](https://github.com/nihil21/custom-svm/tree/master/custom-svm/data) contains generators and datasets. 
+ - the package [`custom-svm/data`](https://github.com/nihil21/custom-svm/tree/master/custom-svm/data) contains generators and datasets.
 
 ### Lagrangian Formulation of the SVM and Optimization
 
-The Lagrangian problem for SVM formulated in its dual form, with the parameter C controlling the trade-off between the amount of misclassified samples and the size of the margin:
+The Lagrangian problem for SVM is formulated as follows:
+
+![Latex image not found :(](res/lag_p.gif?raw=true)
+
+To integrate the soft margin in the formulation, for each data point <img src="https://rawgit.com/nihil21/custom-svm/master/svgs/9fc20fb1d3825674c6a279cb0d5ca636.svg?invert_in_darkmode" align=middle width=14.045887349999989pt height=14.15524440000002pt/> a variable <img src="https://rawgit.com/nihil21/custom-svm/master/svgs/5add1d368d6bcc924b8b5b96abe9b68e.svg?invert_in_darkmode" align=middle width=11.84271164999999pt height=22.831056599999986pt/> is introduced; such variable represents the distance of <img src="https://rawgit.com/nihil21/custom-svm/master/svgs/9fc20fb1d3825674c6a279cb0d5ca636.svg?invert_in_darkmode" align=middle width=14.045887349999989pt height=14.15524440000002pt/> from the corresponding class margin if <img src="https://rawgit.com/nihil21/custom-svm/master/svgs/9fc20fb1d3825674c6a279cb0d5ca636.svg?invert_in_darkmode" align=middle width=14.045887349999989pt height=14.15524440000002pt/> lies on the wrong side of such margin, otherwise they are zero. In other words, <img src="https://rawgit.com/nihil21/custom-svm/master/svgs/5add1d368d6bcc924b8b5b96abe9b68e.svg?invert_in_darkmode" align=middle width=11.84271164999999pt height=22.831056599999986pt/> represents the penalty of the misclassified data point <img src="https://rawgit.com/nihil21/custom-svm/master/svgs/9fc20fb1d3825674c6a279cb0d5ca636.svg?invert_in_darkmode" align=middle width=14.045887349999989pt height=14.15524440000002pt/>, and <img src="https://rawgit.com/nihil21/custom-svm/master/svgs/9b325b9e31e85137d1de765f43c0f8bc.svg?invert_in_darkmode" align=middle width=12.92464304999999pt height=22.465723500000017pt/> controls the trade-off between the amount of misclassified samples and the size of the margin.
+
+Every point <img src="https://rawgit.com/nihil21/custom-svm/master/svgs/9fc20fb1d3825674c6a279cb0d5ca636.svg?invert_in_darkmode" align=middle width=14.045887349999989pt height=14.15524440000002pt/> must satisfy the following constraint:
+
+![Latex image not found :(](res/xi_const.gif?raw=true)
+
+By integrating it into the Lagrangian, the following is obtained:
+
+![Latex image not found :(](res/lag_p_soft.gif?raw=true)
+
+Its dual problem is fomulated as follows:
 
 ![LaTeX image not found :(](res/dual.gif?raw=true)
 
@@ -150,15 +164,21 @@ link latex generator: https://www.codecogs.com/latex/eqneditor.php
 
 raw formula in order:
 
-\max_{\lambda}\, F(\boldsymbol{\lambda}) = \sum\limits_{i=1}^{n}\lambda_i-\frac{1}{2}\sum\limits_{i=1}^{n}\sum\limits_{j=1}^{n}\lambda_i\lambda_j\, y_i\, y_j< \mathbf{\, x_i\, x_j} > 
+\min L(\mathbf{w},b,\mathbf{\Lambda})=\frac{1}{2}\|\mathbf{w}\|^2+\sum_{i=1}^n\lambda_i(y_i(\mathbf{w}\cdot\mathbf{x_i}+b)-1)
+
+y_i(\mathbf{w}\cdot\mathbf{x_i}+b)\ge 1-\xi_i
+
+\min L(\mathbf{w},b,\mathbf{\Lambda})=\frac{1}{2}\|\mathbf{w}\|^2+C\sum_{i=1}^n\xi_{i}+\sum_{i=1}^n\lambda_i(y_i(\mathbf{w}\cdot\mathbf{x_i}+b)-1+\xi_i)
+
+\max F(\mathbf{\Lambda})=\sum_{i=1}^{n}\lambda_i-\frac{1}{2}\sum_{i=1}^{n}\sum_{j=1}^{n}\lambda_i\lambda_j\,y_i\,y_j\,\mathbf{x_i}\cdot\mathbf{x_j}
 
 \lambda_i \geq 0,\: i= 1\, ...\ n
 
-\min_{x}\, F(\boldsymbol{x}) = \frac{1}{2}\boldsymbol{x}^T\mathbf{P}\boldsymbol{x}\, +\, \boldsymbol{q}^T\boldsymbol{x}
+\min_{\mathbf{x}}\, F(\mathbf{x}) = \frac{1}{2}\mathbf{x}^T\mathbf{P}\mathbf{x}\, +\, \mathbf{q}^T\mathbf{x}
 
-\boldsymbol{G x} \leq  \boldsymbol{h}
+\mathbf{Ax}=\mathbf{b}
 
-\boldsymbol{A x} =  \boldsymbol{b}
+\mathbf{Gx}\leq\mathbf{h}
 
 H_i_,_j\, =\, y_i\, y_j\, < \mathbf{\, x_i\, x_j} >
 

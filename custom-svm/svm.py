@@ -84,11 +84,11 @@ class SVM:
         #       s.t. -lambda_i <= 0
         #       s.t. lambda_i <= c
         #       s.t. y^t Lambda = 0
+        # where H[i, j] = y_i y_j K(x_i, x_j)
         # This form is conform to the signature of the quadratic solver provided by CVXOPT library:
         #   min{1/2 x^T P x + q^T x}
         #       s.t. G x <= h
         #       s.t. A x = b
-        # where P is an n_samples*n_samples matrix, where P[i][j] = y_i y_j K(x_i, x_j)
         K = np.zeros(shape=(n_samples, n_samples))
         for i, j in itertools.product(range(n_samples), range(n_samples)):
             K[i, j] = self.kernel_fn(X[i], X[j])
