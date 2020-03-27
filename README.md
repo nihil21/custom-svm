@@ -19,13 +19,13 @@ The repository is structured in the following way:
 
 ### Lagrangian Formulation of the SVM
 
-The Lagrangian problem for SVM formulated in its dual form:
+The Lagrangian problem for SVM formulated in its dual form, with the parameter C controlling the trade-off between the amount of misclassified samples and the size of the margin:
 
 ![LaTeX image not found :(](res/dual.gif?raw=true)
 
 subject to:   
 
-![LaTeX image not found :(](res/const1.gif?raw=true)
+![LaTeX image not found :(](res/const1_C.gif?raw=true)
 
 ![LaTeX image not found :(](res/const2.gif?raw=true)    
 
@@ -51,15 +51,35 @@ subject to:
 
 ![LaTeX image not found :(](res/const5.gif?raw=true)   
 
+![LaTeX image not found :(](res/const_7.gif?raw=true)   
+
 ![LaTeX image not found :(](res/const6.gif?raw=true)    
 
-It is now necessary to convert the numpy arrays that express the optimization problem accordingly to `cvxopt` format. Using the same notation as in the documentation, this gives:  
+It is now necessary to convert the numpy arrays that express the optimization problem accordingly to `cvxopt` format. Supposed m the number of samples and using the same notation as in the documentation, this gives:  
  - **P**:=**H** a matrix of size m×m
- - **q**:=**−1⃗**  a vector of size m×1
- - **G**:=−diag[1] a diagonal matrix of -1s of size m×m
- - **h**:=**0⃗**  a vector of zeros of size m×1
+ - **q**:=-**1⃗**  a vector of size m×1
+ - **G**:= a matrix of size 2m×m, such that a diagonal matrix of -1s of size m×m is concatenated vertically with another diagonal matrix of 1s of size m×m
+ - **h**:=**0⃗**  a vector of size 2m×1, with zeros in the first m cells and C in the other m cells
  - **A**:=**y** the label vector of size m×1
- - b:=0 a scalar
+ - b:=0 a scalar  
+ 
+ In the [`python code`](https://github.com/nihil21/custom-svm/blob/master/custom-svm/svm.py) the parameters needed by the solver are defined as follows, based on the previous guideline: 
+ ```python
+        K = np.zeros(shape=(n_samples, n_samples))
+        for i, j in itertools.product(range(n_samples), range(n_samples)):
+            K[i, j] = self.kernel_fn(X[i], X[j])
+        P = cvxopt.matrix(np.outer(y, y) * K)
+        q = cvxopt.matrix(-np.ones(n_samples))
+        G = cvxopt.matrix(np.vstack((-np.eye(n_samples),
+                                     np.eye(n_samples))))
+        h = cvxopt.matrix(np.hstack((np.zeros(n_samples),
+                                     np.ones(n_samples) * self.c)))
+        A = cvxopt.matrix(y.reshape(1, -1).astype(np.double))
+        b = cvxopt.matrix(np.zeros(1))
+
+```
+ 
+ 
 
 \[...\]
 
