@@ -17,7 +17,7 @@ The repository is structured in the following way:
  - the notebook [`custom-svm/svm_usecase.ipynb`](https://github.com/nihil21/custom-svm/blob/master/custom-svm/svm_usecase.ipynb) shows the usage of the SVM for many different purposes.
  - the package [`custom-svm/data`](https://github.com/nihil21/custom-svm/tree/master/custom-svm/data) contains generators and datasets. 
 
-### Lagrangian Formulation of the SVM
+### Lagrangian Formulation of the SVM and Optimization
 
 The Lagrangian problem for SVM formulated in its dual form, with the parameter C controlling the trade-off between the amount of misclassified samples and the size of the margin:
 
@@ -63,7 +63,7 @@ It is now necessary to convert the numpy arrays that express the optimization pr
  - **A**:=**y** the label vector of size m×1
  - b:=0 a scalar  
  
- In the [`python code`](https://github.com/nihil21/custom-svm/blob/master/custom-svm/svm.py) the parameters needed by the solver are defined as follows, based on the previous guideline: 
+In the [`python code`](https://github.com/nihil21/custom-svm/blob/master/custom-svm/svm.py) the parameters needed by the solver are defined as follows, using the guideline previously provided: 
  ```python
         K = np.zeros(shape=(n_samples, n_samples))
         for i, j in itertools.product(range(n_samples), range(n_samples)):
@@ -76,8 +76,42 @@ It is now necessary to convert the numpy arrays that express the optimization pr
                                      np.ones(n_samples) * self.c)))
         A = cvxopt.matrix(y.reshape(1, -1).astype(np.double))
         b = cvxopt.matrix(np.zeros(1))
-
+        
+        sol = cvxopt.solvers.qp(P, q, G, h, A, b)
 ```
+ The support vectors can be get exploting the variable `sol`, which are those with positive Lagrangian multipliers.
+ 
+ ```python
+        lambdas = np.ravel(sol['x'])
+        is_sv = lambdas > 1e-5
+        self.sv_X = X[is_sv]
+        self.sv_y = y[is_sv]
+        self.lambdas = lambdas[is_sv]
+ ```
+ It is possible to compute then **w**, if the kernel is linear, and b, which are the parameters of the "hyperplane" which separates the classes, in fact:
+ 
+ ![LaTeX image not found :(](res/w_hyp.gif?raw=true)  
+ 
+ And given S as the set of the support vectors:   
+ 
+ ![LaTeX image not found :(](res/b_hyp.gif?raw=true)   
+ 
+ In the [`python code`](https://github.com/nihil21/custom-svm/blob/master/custom-svm/svm.py) the computation is made as follows: 
+ ```python
+         self.w = np.zeros(n_features)
+         for i in range(len(self.lambdas)):
+             self.w += self.lambdas[i] * self.sv_X[i] * self.sv_y[i]
+```
+```python         
+        self.b = 0
+        for i in range(len(self.lambdas)):
+            self.b += self.sv_y[i]
+            self.b -= np.sum(self.lambdas * self.sv_y * K[sv_index[i], is_sv])
+        self.b /= len(self.lambdas)
+```
+ 
+ 
+ ### Prediction of the class label
  
  
 
