@@ -22,6 +22,9 @@ class SVM:
         sv_y --- support vectors related to y
         w --- matrix of hyperplane parameters
         b --- hyperplane bias
+        C --- non-negative float regulating the trade-off between the amount of misclassified samples and
+        the size of the margin (its 'softness' decreases as C increases); if it is set to 'None',
+        hard margin is employed (no tolerance towards misclassified samples)
         is_fit --- boolean variable indicating whether the SVM is fit or not"""
 
     def __init__(self,
@@ -29,7 +32,7 @@ class SVM:
                  gamma: Optional[float] = None,
                  deg: Optional[int] = 3,
                  r: Optional[float] = 0.,
-                 c: Optional[float] = 1.):
+                 C: Optional[float] = 1.):
         """Initializes the SVM object by setting the kernel function, its parameters and the soft margin;
         moreover, it sets to None the matrices of lagrangian multipliers and support vectors.
             :param kernel: string representing the kernel type ('linear'/'rbf'/'poly'/'sigmoid'); by default it is
@@ -38,7 +41,8 @@ class SVM:
             by default it is 'None', since it will be computed automatically during fit
             :param deg: optional integer representing the degree of the 'poly' kernel function
             :param r: optional floating point representing the r parameter of 'poly' and 'sigmoid' kernel functions
-            :param c: float representing the 'softness' of the margin, from 0 ('softest') to 1 ('hard', default)"""
+            :param C: non-negative float regulating the trade-off between the amount of misclassified samples and
+            the size of the margin"""
         # Lagrangian multipliers, hyper-parameters and support vectors are initially set to None
         self.lambdas = None
         self.sv_X = None
@@ -61,7 +65,7 @@ class SVM:
             self.kernel_fn = lambda x_i, x_j: np.tanh(np.dot(x_i, x_j) + r)
 
         # Soft margin
-        self.c = c
+        self.C = C
 
         self.is_fit = False
 
@@ -90,10 +94,15 @@ class SVM:
             K[i, j] = self.kernel_fn(X[i], X[j])
         P = cvxopt.matrix(np.outer(y, y) * K)
         q = cvxopt.matrix(-np.ones(n_samples))
-        G = cvxopt.matrix(np.vstack((-np.eye(n_samples),
-                                     np.eye(n_samples))))
-        h = cvxopt.matrix(np.hstack((np.zeros(n_samples),
-                                     np.ones(n_samples) * self.c)))
+        # Compute G and h matrix according to the type of margin used
+        if self.C:
+            G = cvxopt.matrix(np.vstack((-np.eye(n_samples),
+                                         np.eye(n_samples))))
+            h = cvxopt.matrix(np.hstack((np.zeros(n_samples),
+                                         np.ones(n_samples) * self.C)))
+        else:
+            G = cvxopt.matrix(-np.eye(n_samples))
+            h = cvxopt.matrix(np.zeros(n_samples))
         A = cvxopt.matrix(y.reshape(1, -1).astype(np.double))
         b = cvxopt.matrix(np.zeros(1))
 
