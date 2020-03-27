@@ -6,8 +6,8 @@ Custom implementation of Support Vector Machines using Python and NumPy, as part
 [Lorenzo Mario Amorosa](https://github.com/Lostefra)     
 
 ### Credits
-[Autore, Titolo](https://static1.squarespace.com/static/58851af9ebbd1a30e98fb283/t/58902fbae4fcb5398aeb7505/1485844411772/SVM+Explained.pdf)     
-[Autore, Titolo](http://sfb649.wiwi.hu-berlin.de/fedc_homepage/xplore/tutorials/stfhtmlnode64.html)     
+[Tristan Fletcher, Support Vector Machines Explained](https://static1.squarespace.com/static/58851af9ebbd1a30e98fb283/t/58902fbae4fcb5398aeb7505/1485844411772/SVM+Explained.pdf)     
+[Humboldt-Universität zu Berlin, Lagrangian formulation of the SVM](http://sfb649.wiwi.hu-berlin.de/fedc_homepage/xplore/tutorials/stfhtmlnode64.html)     
 
 ### Design and Implementation: Overview
 
@@ -63,6 +63,8 @@ It is now necessary to convert the numpy arrays that express the optimization pr
  - **A**:=**y** the label vector of size m×1
  - b:=0 a scalar  
  
+It has to be noticed that in case of hard margin the constraints on the upper bound of the Lagrangian multipliers are not given, hence **G** and **h** are smaller in that case.  
+ 
 In the [`python code`](https://github.com/nihil21/custom-svm/blob/master/custom-svm/svm.py) the parameters needed by the solver are defined as follows, using the guideline previously provided: 
  ```python
         K = np.zeros(shape=(n_samples, n_samples))
@@ -70,10 +72,15 @@ In the [`python code`](https://github.com/nihil21/custom-svm/blob/master/custom-
             K[i, j] = self.kernel_fn(X[i], X[j])
         P = cvxopt.matrix(np.outer(y, y) * K)
         q = cvxopt.matrix(-np.ones(n_samples))
-        G = cvxopt.matrix(np.vstack((-np.eye(n_samples),
-                                     np.eye(n_samples))))
-        h = cvxopt.matrix(np.hstack((np.zeros(n_samples),
-                                     np.ones(n_samples) * self.c)))
+        # Compute G and h matrix according to the type of margin used
+        if self.C:
+            G = cvxopt.matrix(np.vstack((-np.eye(n_samples),
+                                         np.eye(n_samples))))
+            h = cvxopt.matrix(np.hstack((np.zeros(n_samples),
+                                         np.ones(n_samples) * self.C)))
+        else:
+            G = cvxopt.matrix(-np.eye(n_samples))
+            h = cvxopt.matrix(np.zeros(n_samples))
         A = cvxopt.matrix(y.reshape(1, -1).astype(np.double))
         b = cvxopt.matrix(np.zeros(1))
         
