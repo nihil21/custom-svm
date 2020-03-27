@@ -95,6 +95,9 @@ In the [`python code`](https://github.com/nihil21/custom-svm/blob/master/custom-
         self.sv_y = y[is_sv]
         self.lambdas = lambdas[is_sv]
  ```
+ 
+ ### Computation of the separating hyperplane   
+ 
  It is possible to compute then **w**, if the kernel is linear, and b, which are the parameters of the "hyperplane" which separates the classes, in fact:
  
  ![LaTeX image not found :(](res/w_hyp.gif?raw=true)  
@@ -120,9 +123,18 @@ In the [`python code`](https://github.com/nihil21/custom-svm/blob/master/custom-
  
  ### Prediction of the class label
  
+ Supposed S the number of support vectors, an input **x** is assignment to a class label y with the following formula. As a side node, in case of linear kernel taking simply the dot product between input and support vectors is enough.     
  
-
-\[...\]
+ ![LaTeX image not found :(](res/pred.gif?raw=true)  
+ 
+ In code:   
+ 
+ ```python
+         y_predict = 0
+         for lamda, sv_X, sv_y in zip(self.lambdas, self.sv_X, self.sv_y):
+                 y_predict += lambda * sv_y * self.kernel_fn(X, sv_X)
+         y_predict = np.sign(y_predict + self.b)
+```
 
 ### SVM for Multiclass Classification
 
