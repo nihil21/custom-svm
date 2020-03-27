@@ -23,9 +23,9 @@ The Lagrangian problem for SVM is formulated as follows:
 
 ![Latex image not found :(](res/lag_p.gif?raw=true)
 
-To integrate the soft margin in the formulation, for each data point <img src="https://rawgit.com/nihil21/custom-svm/master/svgs/9fc20fb1d3825674c6a279cb0d5ca636.svg?invert_in_darkmode" align=middle width=14.045887349999989pt height=14.15524440000002pt/> a variable <img src="https://rawgit.com/nihil21/custom-svm/master/svgs/5add1d368d6bcc924b8b5b96abe9b68e.svg?invert_in_darkmode" align=middle width=11.84271164999999pt height=22.831056599999986pt/> is introduced; such variable represents the distance of <img src="https://rawgit.com/nihil21/custom-svm/master/svgs/9fc20fb1d3825674c6a279cb0d5ca636.svg?invert_in_darkmode" align=middle width=14.045887349999989pt height=14.15524440000002pt/> from the corresponding class margin if <img src="https://rawgit.com/nihil21/custom-svm/master/svgs/9fc20fb1d3825674c6a279cb0d5ca636.svg?invert_in_darkmode" align=middle width=14.045887349999989pt height=14.15524440000002pt/> lies on the wrong side of such margin, otherwise they are zero. In other words, <img src="https://rawgit.com/nihil21/custom-svm/master/svgs/5add1d368d6bcc924b8b5b96abe9b68e.svg?invert_in_darkmode" align=middle width=11.84271164999999pt height=22.831056599999986pt/> represents the penalty of the misclassified data point <img src="https://rawgit.com/nihil21/custom-svm/master/svgs/9fc20fb1d3825674c6a279cb0d5ca636.svg?invert_in_darkmode" align=middle width=14.045887349999989pt height=14.15524440000002pt/>, and <img src="https://rawgit.com/nihil21/custom-svm/master/svgs/9b325b9e31e85137d1de765f43c0f8bc.svg?invert_in_darkmode" align=middle width=12.92464304999999pt height=22.465723500000017pt/> controls the trade-off between the amount of misclassified samples and the size of the margin.
+To integrate the soft margin in the formulation, for each data point $x_i$ a variable $\xi_i$ is introduced; such variable represents the distance of $x_i$ from the corresponding class margin if $x_i$ lies on the wrong side of such margin, otherwise they are zero. In other words, $\xi_i$ represents the penalty of the misclassified data point $x_i$, and $C$ controls the trade-off between the amount of misclassified samples and the size of the margin.
 
-Every point <img src="https://rawgit.com/nihil21/custom-svm/master/svgs/9fc20fb1d3825674c6a279cb0d5ca636.svg?invert_in_darkmode" align=middle width=14.045887349999989pt height=14.15524440000002pt/> must satisfy the following constraint:
+Every point $x_i$ must satisfy the following constraint:
 
 ![Latex image not found :(](res/xi_const.gif?raw=true)
 
@@ -70,16 +70,16 @@ subject to:
 ![LaTeX image not found :(](res/const6.gif?raw=true)    
 
 It is now necessary to convert the numpy arrays that express the optimization problem accordingly to `cvxopt` format. Supposed m the number of samples and using the same notation as in the documentation, this gives:  
- - ![LaTeX image not found :(](res/inline1.gif?raw=true) a matrix of size m×m 
+ - ![LaTeX image not found :(](res/inline1.gif?raw=true) a matrix of size m×m
  - ![LaTeX image not found :(](res/inline2.gif?raw=true)  a vector of size m×1
  - ![LaTeX image not found :(](res/inline3.gif?raw=true) a matrix of size 2m×m, such that a diagonal matrix of -1s of size m×m is concatenated vertically with another diagonal matrix of 1s of size m×m
  - ![LaTeX image not found :(](res/inline4.gif?raw=true)  a vector of size 2m×1, with zeros in the first m cells and C in the other m cells
  - ![LaTeX image not found :(](res/inline5.gif?raw=true) the label vector of size m×1
  - ![LaTeX image not found :(](res/inline6.gif?raw=true) a scalar  
- 
+
 It has to be noticed that in case of hard margin the constraints on the upper bound of the Lagrangian multipliers are not given, hence **G** and **h** are smaller in that case.  
- 
-In the [`python code`](https://github.com/nihil21/custom-svm/blob/master/custom-svm/svm.py) the parameters needed by the solver are defined as follows, using the guideline previously provided: 
+
+In the [`python code`](https://github.com/nihil21/custom-svm/blob/master/custom-svm/svm.py) the parameters needed by the solver are defined as follows, using the guideline previously provided:
  ```python
         K = np.zeros(shape=(n_samples, n_samples))
         for i, j in itertools.product(range(n_samples), range(n_samples)):
@@ -97,11 +97,11 @@ In the [`python code`](https://github.com/nihil21/custom-svm/blob/master/custom-
             h = cvxopt.matrix(np.zeros(n_samples))
         A = cvxopt.matrix(y.reshape(1, -1).astype(np.double))
         b = cvxopt.matrix(np.zeros(1))
-        
+
         sol = cvxopt.solvers.qp(P, q, G, h, A, b)
 ```
  The support vectors can be get exploting the variable `sol`, which are those with positive Lagrangian multipliers.
- 
+
  ```python
         lambdas = np.ravel(sol['x'])
         is_sv = lambdas > 1e-5
@@ -109,18 +109,18 @@ In the [`python code`](https://github.com/nihil21/custom-svm/blob/master/custom-
         self.sv_y = y[is_sv]
         self.lambdas = lambdas[is_sv]
  ```
- 
+
  ### Computation of the separating hyperplane   
- 
+
  It is possible to compute then **w**, if the kernel is linear, and b, which are the parameters of the "hyperplane" which separates the classes, in fact:
- 
+
  ![LaTeX image not found :(](res/w_hyp.gif?raw=true)  
- 
+
  And given S as the set of the support vectors:   
- 
+
  ![LaTeX image not found :(](res/b_hyp.gif?raw=true)   
- 
- In the [`python code`](https://github.com/nihil21/custom-svm/blob/master/custom-svm/svm.py) the computation is made as follows: 
+
+ In the [`python code`](https://github.com/nihil21/custom-svm/blob/master/custom-svm/svm.py) the computation is made as follows:
  ```python
          self.w = np.zeros(n_features)
          for i in range(len(self.lambdas)):
@@ -133,16 +133,16 @@ In the [`python code`](https://github.com/nihil21/custom-svm/blob/master/custom-
             self.b -= np.sum(self.lambdas * self.sv_y * K[sv_index[i], is_sv])
         self.b /= len(self.lambdas)
 ```
- 
- 
+
+
  ### Prediction of the class label
- 
+
  Supposed S the number of support vectors, an input **x** is assignment to a class label y with the following formula. As a side node, in case of linear kernel taking simply the dot product between input and support vectors is enough.     
- 
+
  ![LaTeX image not found :(](res/pred.gif?raw=true)  
- 
+
  In [`code`](https://github.com/nihil21/custom-svm/blob/master/custom-svm/svm.py):   
- 
+
  ```python
          y_predict = 0
          for lamda, sv_X, sv_y in zip(self.lambdas, self.sv_X, self.sv_y):
@@ -188,5 +188,3 @@ H_i_,_j\, =\, y_i\, y_j\, < \mathbf{\, x_i\, x_j} >
 - The SVM model is initially created by specifying the type of kernel ('rbf'/'poly'/'sigmoid') and the value of the gamma parameter (by default, 'rbf' is used with gamma computed automatically during the 'fit' process).
 - When the 'fit' method is called (passing a supervised training set), the model learns the correct parameters of the hyperplane by maximising a lagrangian function.
 - When the 'predict' method is called, new instances are classified according to the learnt parameters.
-
-
