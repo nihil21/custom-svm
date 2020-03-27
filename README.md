@@ -23,9 +23,9 @@ The Lagrangian problem for SVM is formulated as follows:
 
 ![Latex image not found :(](res/lag_p.gif?raw=true)
 
-To integrate the soft margin in the formulation, for each data point ![](res/x_i_inline.gif?raw=true) a variable ![](res/xi_i.gif?raw=true) is introduced; such variable represents the distance of ![](res/x_i_inline.gif?raw=true) from the corresponding class margin if ![](res/x_i_inline.gif?raw=true) lies on the wrong side of such margin, otherwise they are zero. In other words, ![](res/xi_i.gif?raw=true) represents the penalty of the misclassified data point ![](res/x_i_inline.gif?raw=true), and  controls the trade-off between the amount of misclassified samples and the size of the margin.
+To integrate the soft margin in the formulation, for each data point ![](res/x_i_inline.gif?raw=true) a variable ![](res/xi_i.gif?raw=true) is introduced; such variable represents the distance of ![](res/x_i_inline.gif?raw=true) from the corresponding class margin if ![](res/x_i_inline.gif?raw=true) lies on the wrong side of such margin, otherwise they are zero. In other words, ![](res/xi_i.gif?raw=true) represents the penalty of the misclassified data point ![](res/x_i_inline.gif?raw=true), and ![](res/C.gif?raw=true) controls the trade-off between the amount of misclassified samples and the size of the margin.
 
-Every point $\mathbf{x_i}$ must satisfy the following constraint:
+Every point ![](res/x_i_inline.gif?raw=true) must satisfy the following constraint:
 
 ![Latex image not found :(](res/xi_const.gif?raw=true)
 
@@ -33,7 +33,7 @@ By integrating it into the Lagrangian, the following is obtained:
 
 ![Latex image not found :(](res/lag_p_soft.gif?raw=true)
 
-Its dual problem is fomulated as follows:
+Its dual problem is formulated as follows:
 
 ![LaTeX image not found :(](res/dual.gif?raw=true)
 
