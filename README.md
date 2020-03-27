@@ -23,7 +23,7 @@ The Lagrangian problem for SVM is formulated as follows:
 
 ![Latex image not found :(](res/lag_p.gif?raw=true)
 
-To integrate the soft margin in the formulation, for each data point $\mathbf{x_i}$ a variable $\xi_i$ is introduced; such variable represents the distance of $\mathbf{x_i}$ from the corresponding class margin if $\mathbf{x_i}$ lies on the wrong side of such margin, otherwise they are zero. In other words, $\xi_i$ represents the penalty of the misclassified data point $\mathbf{x_i}$, and $C$ controls the trade-off between the amount of misclassified samples and the size of the margin.
+To integrate the soft margin in the formulation, for each data point ![](res/x_i_inline.gif?raw=true) a variable ![](res/xi_i.gif?raw=true) is introduced; such variable represents the distance of ![](res/x_i_inline.gif?raw=true) from the corresponding class margin if ![](res/x_i_inline.gif?raw=true) lies on the wrong side of such margin, otherwise they are zero. In other words, ![](res/xi_i.gif?raw=true) represents the penalty of the misclassified data point ![](res/x_i_inline.gif?raw=true), and  controls the trade-off between the amount of misclassified samples and the size of the margin.
 
 Every point $\mathbf{x_i}$ must satisfy the following constraint:
 
