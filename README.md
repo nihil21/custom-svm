@@ -39,7 +39,7 @@ subject to:
 
 ![LaTeX image not found :(](res/const4.gif?raw=true)
 
-Let **H** be a matrix such that H<sub>i,j</sub> = y<sub>i</sub> y<sub>j</sub> **x<sub>i</sub> x<sub>j</sub>** , then the function to optimize becomes:
+Let **H** be a matrix such that ![LaTeX image not found :(](res/inline_h.gif?raw=true) , then the function to optimize becomes:
 
 ![LaTeX image not found :(](res/dual_h.gif?raw=true)
 
@@ -56,12 +56,12 @@ subject to:
 ![LaTeX image not found :(](res/const6.gif?raw=true)    
 
 It is now necessary to convert the numpy arrays that express the optimization problem accordingly to `cvxopt` format. Supposed m the number of samples and using the same notation as in the documentation, this gives:  
- - **P**:=**H** a matrix of size m×m
- - **q**:=-**1⃗**  a vector of size m×1
- - **G**:= a matrix of size 2m×m, such that a diagonal matrix of -1s of size m×m is concatenated vertically with another diagonal matrix of 1s of size m×m
- - **h**:=**0⃗**  a vector of size 2m×1, with zeros in the first m cells and C in the other m cells
- - **A**:=**y** the label vector of size m×1
- - b:=0 a scalar  
+ - ![LaTeX image not found :(](res/inline1.gif?raw=true) a matrix of size m×m 
+ - ![LaTeX image not found :(](res/inline2.gif?raw=true)  a vector of size m×1
+ - ![LaTeX image not found :(](res/inline3.gif?raw=true) a matrix of size 2m×m, such that a diagonal matrix of -1s of size m×m is concatenated vertically with another diagonal matrix of 1s of size m×m
+ - ![LaTeX image not found :(](res/inline4.gif?raw=true)  a vector of size 2m×1, with zeros in the first m cells and C in the other m cells
+ - ![LaTeX image not found :(](res/inline5.gif?raw=true) the label vector of size m×1
+ - ![LaTeX image not found :(](res/inline6.gif?raw=true) a scalar  
  
 It has to be noticed that in case of hard margin the constraints on the upper bound of the Lagrangian multipliers are not given, hence **G** and **h** are smaller in that case.  
  
@@ -140,7 +140,7 @@ In the [`python code`](https://github.com/nihil21/custom-svm/blob/master/custom-
 
 The module [`multiclass_svm.py`](https://github.com/nihil21/custom-svm/blob/master/custom-svm/multiclass_svm.py) contains the implementation of Support Vector Machine for multi-classification purposes based on **one-vs-one strategy**.  
 It offers full support to **kernel functions** and **soft margin**, in fact the signature of its `__init__` method is the same of the binary `SVM`.    
-Given N different classes to classify, the algorithm provides N*(N-1)/2 SVM binary classifiers from the module [`svm.py`](https://github.com/nihil21/custom-svm/blob/master/custom-svm/svm.py).   
+Given N different classes to classify, the algorithm provides ![LaTeX image not found :(](res/multi.gif?raw=true) SVM binary classifiers from the module [`svm.py`](https://github.com/nihil21/custom-svm/blob/master/custom-svm/svm.py).   
 **Each classifier** is **trained** to correctly classify **2 of the N** given **classes**. In the training process there are used only the entries in the dataset to which it corresponds a label of the 2 classes.   
 Given an unseen example, the **prediction** of the class is computed deploying a **voting schema** among the binary `SVM` classifiers.   
 The voting process is based on the standard `predict` function for binary `SVM` classifiers, so the tested entry is assigned to the class which wins the highest number of binary comparisons. In addition, it is available a mechanism to **counteract** the possible risk of **draw** in voting, based on the raw values predicted by the binary classifiers before the application of 'sign' function.
