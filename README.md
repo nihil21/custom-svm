@@ -127,7 +127,7 @@ In the [`python code`](https://github.com/nihil21/custom-svm/blob/master/custom-
  
  ![LaTeX image not found :(](res/pred.gif?raw=true)  
  
- In code:   
+ In [`code`](https://github.com/nihil21/custom-svm/blob/master/custom-svm/svm.py):   
  
  ```python
          y_predict = 0
