@@ -23,9 +23,9 @@ The Lagrangian problem for SVM is formulated as follows:
 
 ![Latex image not found :(](res/lag_p.gif?raw=true)
 
-To integrate the soft margin in the formulation, for each data point <img src="res/svgs/a9181dcbb0c785f87c807a62fbca43d5.svg?invert_in_darkmode" align=middle width=14.15517674999999pt height=14.611878600000017pt/> a variable <img src="res/svgs/5add1d368d6bcc924b8b5b96abe9b68e.svg?invert_in_darkmode" align=middle width=11.84271164999999pt height=22.831056599999986pt/> is introduced; such variable represents the distance of <img src="res/svgs/a9181dcbb0c785f87c807a62fbca43d5.svg?invert_in_darkmode" align=middle width=14.15517674999999pt height=14.611878600000017pt/> from the corresponding class margin if <img src="res/svgs/a9181dcbb0c785f87c807a62fbca43d5.svg?invert_in_darkmode" align=middle width=14.15517674999999pt height=14.611878600000017pt/> lies on the wrong side of such margin, otherwise they are zero. In other words, <img src="res/svgs/5add1d368d6bcc924b8b5b96abe9b68e.svg?invert_in_darkmode" align=middle width=11.84271164999999pt height=22.831056599999986pt/> represents the penalty of the misclassified data point <img src="res/svgs/a9181dcbb0c785f87c807a62fbca43d5.svg?invert_in_darkmode" align=middle width=14.15517674999999pt height=14.611878600000017pt/>, and <img src="res/svgs/9b325b9e31e85137d1de765f43c0f8bc.svg?invert_in_darkmode" align=middle width=12.92464304999999pt height=22.465723500000017pt/> controls the trade-off between the amount of misclassified samples and the size of the margin.
+To integrate the soft margin in the formulation, for each data point $\mathbf{x_i}$ a variable $\xi_i$ is introduced; such variable represents the distance of $\mathbf{x_i}$ from the corresponding class margin if $\mathbf{x_i}$ lies on the wrong side of such margin, otherwise they are zero. In other words, $\xi_i$ represents the penalty of the misclassified data point $\mathbf{x_i}$, and $C$ controls the trade-off between the amount of misclassified samples and the size of the margin.
 
-Every point <img src="res/svgs/a9181dcbb0c785f87c807a62fbca43d5.svg?invert_in_darkmode" align=middle width=14.15517674999999pt height=14.611878600000017pt/> must satisfy the following constraint:
+Every point $\mathbf{x_i}$ must satisfy the following constraint:
 
 ![Latex image not found :(](res/xi_const.gif?raw=true)
 
