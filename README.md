@@ -174,11 +174,11 @@ The voting process is based on the standard `predict` function for binary `SVM` 
 - When the 'fit' method is called (passing a supervised training set), the model learns the correct parameters of the hyperplane by minimizing the dual lagrangian function discussed in the previous section.
 - When the 'predict' method is called, new instances are classified according to the learnt parameters.
 
------------------------------------------------
-
 ### Credits
 [Tristan Fletcher, Support Vector Machines Explained](https://static1.squarespace.com/static/58851af9ebbd1a30e98fb283/t/58902fbae4fcb5398aeb7505/1485844411772/SVM+Explained.pdf)     
 [Humboldt-Universität zu Berlin, Lagrangian formulation of the SVM](http://sfb649.wiwi.hu-berlin.de/fedc_homepage/xplore/tutorials/stfhtmlnode64.html)
+
+-----------------------------------------------
 
 link latex generator: https://www.codecogs.com/latex/eqneditor.php
 
