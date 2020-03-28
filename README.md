@@ -5,10 +5,6 @@ Custom implementation of Support Vector Machines using Python and NumPy, as part
 [Mattia Orlandi](https://github.com/nihil21)     
 [Lorenzo Mario Amorosa](https://github.com/Lostefra)     
 
-### Credits
-[Tristan Fletcher, Support Vector Machines Explained](https://static1.squarespace.com/static/58851af9ebbd1a30e98fb283/t/58902fbae4fcb5398aeb7505/1485844411772/SVM+Explained.pdf)     
-[Humboldt-Universität zu Berlin, Lagrangian formulation of the SVM](http://sfb649.wiwi.hu-berlin.de/fedc_homepage/xplore/tutorials/stfhtmlnode64.html)     
-
 ### Design and Implementation: Overview
 
 The repository is structured in the following way:
@@ -173,7 +169,17 @@ Given N different classes to classify, the algorithm provides ![LaTeX image not 
 Given an unseen example, the **prediction** of the class is computed deploying a **voting schema** among the binary `SVM` classifiers.   
 The voting process is based on the standard `predict` function for binary `SVM` classifiers, so the tested entry is assigned to the class which wins the highest number of binary comparisons. In addition, it is available a mechanism to **counteract** the possible risk of **draw** in voting, based on the raw values predicted by the binary classifiers before the application of 'sign' function.
 
+### Workflow
+- The SVM model is initially created by specifying the type of kernel ('rbf'/'poly'/'sigmoid') and the value of the associated parameters ('gamma', 'deg' and 'r'); also, the parameter 'C' regulating the soft margin is specified.
+- When the 'fit' method is called (passing a supervised training set), the model learns the correct parameters of the hyperplane by minimizing the dual lagrangian function discussed in the previous section.
+- When the 'predict' method is called, new instances are classified according to the learnt parameters.
+
 -----------------------------------------------
+
+### Credits
+[Tristan Fletcher, Support Vector Machines Explained](https://static1.squarespace.com/static/58851af9ebbd1a30e98fb283/t/58902fbae4fcb5398aeb7505/1485844411772/SVM+Explained.pdf)     
+[Humboldt-Universität zu Berlin, Lagrangian formulation of the SVM](http://sfb649.wiwi.hu-berlin.de/fedc_homepage/xplore/tutorials/stfhtmlnode64.html)
+
 link latex generator: https://www.codecogs.com/latex/eqneditor.php
 
 raw formula in order:
@@ -205,8 +211,3 @@ K(\mathbf{x_i},\mathbf{x_j})=\phi(\mathbf{x_i})\cdot\phi(\mathbf{x_j})
 b=\frac{1}{N_s}\sum_{s\in S}(y_s-\sum_{m\in S}\lambda_m\,y_m\,K(\mathbf{x_m},\mathbf{x_s}))
 
 y=\text{sgn}(\sum_{i=1}^n \lambda_i\,y_i\,K(\mathbf{x_i},\mathbf{x})+b)
-
-### Workflow
-- The SVM model is initially created by specifying the type of kernel ('rbf'/'poly'/'sigmoid') and the value of the associated parameters ('gamma', 'deg' and 'r'); also, the parameter 'C' regulating the soft margin is specified.
-- When the 'fit' method is called (passing a supervised training set), the model learns the correct parameters of the hyperplane by minimizing the dual lagrangian function discussed in the previous section.
-- When the 'predict' method is called, new instances are classified according to the learnt parameters.
