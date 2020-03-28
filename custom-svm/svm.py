@@ -145,8 +145,8 @@ class SVM:
             print('{0:d} support vectors found out of {1:d} data points'.format(len(self.lambdas), n_samples))
             if verbosity == 2:
                 for i in range(len(self.lambdas)):
-                    print('{0:d}) X: {1}\ty: {2}'.format(i + 1, self.sv_X[i], self.sv_y[i]))
-                    print('Lagrangian multipliers:', self.lambdas)
+                    print('{0:d}) X: {1}\ty: {2}\tlambda: {3:.2f}'
+                          .format(i + 1, self.sv_X[i], self.sv_y[i], self.lambdas[i]))
             print('Bias of the hyper-plane: {0:.3f}'.format(self.b))
             print('Weights of the hyper-plane:', self.w)
 
