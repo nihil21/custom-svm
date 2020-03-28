@@ -1,3 +1,4 @@
+import collections
 from typing import Optional
 import numpy as np
 from svm import SVM
@@ -39,17 +40,25 @@ class MulticlassSVM:
                 raise ValueError(str(label) + " is not an integer value label")
         self.labels = np.array(labels, dtype=int)
 
+        # re-arrange training set per labels in a dictionary
+        X_arranged_list = collections.defaultdict(list)
+        for index, x in enumerate(X):
+            X_arranged_list[y[index]].append(x)
+
+        # convert to numpy array the previous dictionary
+        X_arranged_numpy = {}
+        for index in range(len(self.labels)):
+            X_arranged_numpy[index] = np.array(X_arranged_list[index])
+
         for i in range(0, self.labels.shape[0] - 1):
             for j in range(i + 1, self.labels.shape[0]):
-                current_dataset_index = np.array([True if yi in [self.labels[i], self.labels[j]]
-                                                  else False
-                                                  for yi in y.tolist()])
-                current_X = X[current_dataset_index]
-                current_y = np.fromiter((-1 if yi == self.labels[i] else 1 for yi in y[current_dataset_index]), y.dtype)
+                current_X = np.concatenate((X_arranged_numpy[i], X_arranged_numpy[j]))
+                current_y = np.concatenate((- np.ones((len(X_arranged_numpy[i]),), dtype=int),
+                                           np.ones(len((X_arranged_numpy[j]),), dtype=int)))
                 svm = SVM(kernel=self.kernel, gamma=self.gamma, deg=self.deg, r=self.r, C=self.C)
                 svm.fit(current_X, current_y, verbosity=0)
                 for sv in svm.sv_X:
-                    self.support_vectors.add(map(tuple, sv))
+                    self.support_vectors.add(tuple(sv.tolist()))
                 svm_tuple = (svm, self.labels[i], self.labels[j])
                 self.SVMs.append(svm_tuple)
         print('{0:d} support vectors found out of {1:d} data points'.format(len(self.support_vectors), len(X)))
@@ -63,7 +72,7 @@ class MulticlassSVM:
            - voting_schema[j][0][i] is the number of total comparisons won
            - voting_schema[j][1][i] is the cumulative sum of predicted values"""
 
-        voting_schema = np.zeros([len(X), self.labels.shape[0], 2], dtype=float)
+        voting_schema = np.zeros([len(X), 2, self.labels.shape[0]], dtype=float)
         for svm_tuple in self.SVMs:
             prediction = svm_tuple[0].project(X)
             for i in range(len(prediction)):
