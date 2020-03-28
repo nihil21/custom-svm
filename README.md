@@ -53,7 +53,7 @@ subject to:
 
 ![LaTeX image not found :(](res/const4.gif?raw=true)
 
-Let **H** be a matrix such that ![LaTeX image not found :(](res/inline_h.gif?raw=true) , then the function to optimize becomes:
+Let ![](res/H.gif?raw=true) be a matrix such that ![LaTeX image not found :(](res/inline_h.gif?raw=true) , then the function to optimize becomes:
 
 ![LaTeX image not found :(](res/dual_h.gif?raw=true)
 
@@ -180,9 +180,11 @@ y_i(\mathbf{w}\cdot\mathbf{x_i}+b)\ge 1-\xi_i
 
 \mathbf{Gx}\leq\mathbf{h}
 
-H_i_,_j\, =\, y_i\, y_j\, < \mathbf{\, x_i\, x_j} >
+\mathbf{H_{i,j}}=y_i\, y_j\, \mathbf{x_i}\cdot\mathbf{x_j}
 
-\max_{\lambda}\, F(\boldsymbol{\lambda}) = \sum\limits_{i=1}^{n}\lambda_i-\frac{1}{2}\boldsymbol{\lambda}^T\mathbf{H}\boldsymbol{\lambda}
+\max_{\mathbf\Lambda}\, F(\mathbf\Lambda) = \sum_{i=1}^{n}\lambda_i-\frac{1}{2}\mathbf{\Lambda}^T\mathbf{H}\mathbf{\Lambda}
+
+\min_{\mathbf\Lambda}\, F(\mathbf\Lambda) = \frac{1}{2}\mathbf{\Lambda}^T\mathbf{H}\mathbf{\Lambda}-\mathbf{1}^T\mathbf\Lambda
 
 ### Workflow
 - The SVM model is initially created by specifying the type of kernel ('rbf'/'poly'/'sigmoid') and the value of the gamma parameter (by default, 'rbf' is used with gamma computed automatically during the 'fit' process).

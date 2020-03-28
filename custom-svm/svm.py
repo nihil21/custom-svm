@@ -146,6 +146,7 @@ class SVM:
             if verbosity == 2:
                 for i in range(len(self.lambdas)):
                     print('{0:d}) X: {1}\ty: {2}'.format(i + 1, self.sv_X[i], self.sv_y[i]))
+                    print('Lagrangian multipliers:', self.lambdas)
             print('Bias of the hyper-plane: {0:.3f}'.format(self.b))
             print('Weights of the hyper-plane:', self.w)
 
