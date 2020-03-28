@@ -177,37 +177,3 @@ The voting process is based on the standard `predict` function for binary `SVM` 
 ### Credits
 [Tristan Fletcher, Support Vector Machines Explained](https://static1.squarespace.com/static/58851af9ebbd1a30e98fb283/t/58902fbae4fcb5398aeb7505/1485844411772/SVM+Explained.pdf)     
 [Humboldt-Universität zu Berlin, Lagrangian formulation of the SVM](http://sfb649.wiwi.hu-berlin.de/fedc_homepage/xplore/tutorials/stfhtmlnode64.html)
-
------------------------------------------------
-
-link latex generator: https://www.codecogs.com/latex/eqneditor.php
-
-raw formula in order:
-
-\min L(\mathbf{w},b,\mathbf{\Lambda})=\frac{1}{2}\|\mathbf{w}\|^2+\sum_{i=1}^n\lambda_i(y_i(\mathbf{w}\cdot\mathbf{x_i}+b)-1)
-
-y_i(\mathbf{w}\cdot\mathbf{x_i}+b)\ge 1-\xi_i
-
-\min L(\mathbf{w},b,\mathbf{\Lambda})=\frac{1}{2}\|\mathbf{w}\|^2+C\sum_{i=1}^n\xi_{i}+\sum_{i=1}^n\lambda_i(y_i(\mathbf{w}\cdot\mathbf{x_i}+b)-1+\xi_i)
-
-\max F(\mathbf{\Lambda})=\sum_{i=1}^{n}\lambda_i-\frac{1}{2}\sum_{i=1}^{n}\sum_{j=1}^{n}\lambda_i\lambda_j\,y_i\,y_j\,\mathbf{x_i}\cdot\mathbf{x_j}
-
-\lambda_i \geq 0,\: i= 1\, ...\ n
-
-\min_{\mathbf{x}}\, F(\mathbf{x}) = \frac{1}{2}\mathbf{x}^T\mathbf{P}\mathbf{x}\, +\, \mathbf{q}^T\mathbf{x}
-
-\mathbf{Ax}=\mathbf{b}
-
-\mathbf{Gx}\leq\mathbf{h}
-
-\mathbf{H_{i,j}}=y_i\, y_j\, \mathbf{x_i}\cdot\mathbf{x_j}
-
-\max_{\mathbf\Lambda}\, F(\mathbf\Lambda) = \sum_{i=1}^{n}\lambda_i-\frac{1}{2}\mathbf{\Lambda}^T\mathbf{H}\mathbf{\Lambda}
-
-\min_{\mathbf\Lambda}\, F(\mathbf\Lambda) = \frac{1}{2}\mathbf{\Lambda}^T\mathbf{H}\mathbf{\Lambda}-\mathbf{1}^T\mathbf\Lambda
-
-K(\mathbf{x_i},\mathbf{x_j})=\phi(\mathbf{x_i})\cdot\phi(\mathbf{x_j})
-
-b=\frac{1}{N_s}\sum_{s\in S}(y_s-\sum_{m\in S}\lambda_m\,y_m\,K(\mathbf{x_m},\mathbf{x_s}))
-
-y=\text{sgn}(\sum_{i=1}^n \lambda_i\,y_i\,K(\mathbf{x_i},\mathbf{x})+b)
