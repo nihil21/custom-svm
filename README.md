@@ -77,7 +77,21 @@ It is now necessary to convert the numpy arrays that express the optimization pr
  - ![LaTeX image not found :(](res/inline5.gif?raw=true) the label vector of size m×1
  - ![LaTeX image not found :(](res/inline6.gif?raw=true) a scalar  
 
-It has to be noticed that in case of hard margin the constraints on the upper bound of the Lagrangian multipliers are not given, hence **G** and **h** are smaller in that case.  
+It has to be noticed that in case of hard margin the constraints on the upper bound of the Lagrangian multipliers are not given, hence ![](res/G.gif?raw=true) and ![](res/h.gif?raw=true) are smaller in that case.  
+
+#### Kernel trick
+Since the hyperplane is a linear function, the SVM model defined so far is suited only to linearly separable datasets, which is not very useful in real-world scenarios.  
+To enable the correct classification in the non-linear case, the data to classify is mapped by ![](res/map_x.gif?raw=true) into a new space, in which the data is linearly separable and thus in which SVM can be applied.
+
+However, computing the mapping ![](res/map_x.gif?raw=true) for every ![](res/x.gif?raw=true) is computationally expensive; therefore, since only the product ![](res/dot_prod.gif?raw=true) is relevant as far as fitting and classification are concerned, only the mapping of such product is considered (*kernel trick*):
+
+![](res/kernel_trick.gif?raw=true)
+
+where ![](res/K.gif?raw=true) is called *kernel function*, and it can be:
+- dot product (**linear case**);
+- polynomial;
+- radial basis function;
+- sigmoid.
 
 In the [`python code`](https://github.com/nihil21/custom-svm/blob/master/custom-svm/svm.py) the parameters needed by the solver are defined as follows, using the guideline previously provided:
  ```python
@@ -100,7 +114,7 @@ In the [`python code`](https://github.com/nihil21/custom-svm/blob/master/custom-
 
         sol = cvxopt.solvers.qp(P, q, G, h, A, b)
 ```
- The support vectors can be get exploting the variable `sol`, which are those with positive Lagrangian multipliers.
+ The support vectors can be get exploiting the variable `sol`, which are those with positive Lagrangian multipliers.
 
  ```python
         lambdas = np.ravel(sol['x'])
@@ -112,11 +126,11 @@ In the [`python code`](https://github.com/nihil21/custom-svm/blob/master/custom-
 
  ### Computation of the separating hyperplane   
 
- It is possible to compute then **w**, if the kernel is linear, and b, which are the parameters of the "hyperplane" which separates the classes, in fact:
+ It is possible to compute then ![](res/w.gif?raw=true), if the kernel is linear, and ![](res/b.gif?raw=true), which are the parameters of the "hyperplane" which separates the classes, in fact:
 
  ![LaTeX image not found :(](res/w_hyp.gif?raw=true)  
 
- And given S as the set of the support vectors:   
+ And given ![](res/S.gif?raw=true) as the set of the support vectors:   
 
  ![LaTeX image not found :(](res/b_hyp.gif?raw=true)   
 
@@ -137,7 +151,7 @@ In the [`python code`](https://github.com/nihil21/custom-svm/blob/master/custom-
 
  ### Prediction of the class label
 
- Supposed S the number of support vectors, an input **x** is assignment to a class label y with the following formula. As a side node, in case of linear kernel taking simply the dot product between input and support vectors is enough.     
+ Supposed S the number of support vectors, an input ![](res/x.gif?raw=true) is assignment to a class label ![](res/y.gif?raw=true) with the following formula. As a side node, in case of linear kernel taking simply the dot product between input and support vectors is enough.     
 
  ![LaTeX image not found :(](res/pred.gif?raw=true)  
 
@@ -186,7 +200,13 @@ y_i(\mathbf{w}\cdot\mathbf{x_i}+b)\ge 1-\xi_i
 
 \min_{\mathbf\Lambda}\, F(\mathbf\Lambda) = \frac{1}{2}\mathbf{\Lambda}^T\mathbf{H}\mathbf{\Lambda}-\mathbf{1}^T\mathbf\Lambda
 
+K(\mathbf{x_i},\mathbf{x_j})=\phi(\mathbf{x_i})\cdot\phi(\mathbf{x_j})
+
+b=\frac{1}{N_s}\sum_{s\in S}(y_s-\sum_{m\in S}\lambda_m\,y_m\,K(\mathbf{x_m},\mathbf{x_s}))
+
+y=\text{sgn}(\sum_{i=1}^n \lambda_i\,y_i\,K(\mathbf{x_i},\mathbf{x})+b)
+
 ### Workflow
-- The SVM model is initially created by specifying the type of kernel ('rbf'/'poly'/'sigmoid') and the value of the gamma parameter (by default, 'rbf' is used with gamma computed automatically during the 'fit' process).
-- When the 'fit' method is called (passing a supervised training set), the model learns the correct parameters of the hyperplane by maximising a lagrangian function.
+- The SVM model is initially created by specifying the type of kernel ('rbf'/'poly'/'sigmoid') and the value of the associated parameters ('gamma', 'deg' and 'r'); also, the parameter 'C' regulating the soft margin is specified.
+- When the 'fit' method is called (passing a supervised training set), the model learns the correct parameters of the hyperplane by minimizing the dual lagrangian function discussed in the previous section.
 - When the 'predict' method is called, new instances are classified according to the learnt parameters.
