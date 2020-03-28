@@ -16,7 +16,7 @@ class MulticlassSVM:
                  gamma: Optional[float] = None,
                  deg: Optional[int] = 3,
                  r: Optional[float] = 0.0,
-                 c: Optional[float] = 1.):
+                 C: Optional[float] = 1.):
         # self.SVMs: list of tuples, each one of 3 elements: (SVM_binary_classifier, 1st_class_label, 2nd_class_label)
         #            1st_class_label corresponds to sign "-", 2nd_class_label to sign "+"
         # Note: the number of binary SVM classifiers needed will be known only when the dataset labels will be given
@@ -27,7 +27,7 @@ class MulticlassSVM:
         self.gamma = gamma
         self.deg = deg
         self.r = r
-        self.c = c
+        self.C = C
         self.labels = None
         self.support_vectors = set()
 
@@ -46,7 +46,7 @@ class MulticlassSVM:
                                                   for yi in y.tolist()])
                 current_X = X[current_dataset_index]
                 current_y = np.fromiter((-1 if yi == self.labels[i] else 1 for yi in y[current_dataset_index]), y.dtype)
-                svm = SVM(kernel=self.kernel, gamma=self.gamma, deg=self.deg, r=self.r, c=self.c)
+                svm = SVM(kernel=self.kernel, gamma=self.gamma, deg=self.deg, r=self.r, C=self.C)
                 svm.fit(current_X, current_y, verbosity=0)
                 for sv in svm.sv_X:
                     self.support_vectors.add(map(tuple, sv))
