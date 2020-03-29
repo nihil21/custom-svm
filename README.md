@@ -12,7 +12,7 @@ This project requires the following libraries:
 - `scikit-learn` for generating and splitting the dataset, to assess accuracy, and to confront our implementation with SVC;
 - `matplotlib` for plotting graphs.
 
-The complete list of the packages used in the virtual environment is in [`custom-svm/svm.py`](https://github.com/nihil21/custom-svm/blob/master/requirements.txt); to install all those modules, it is sufficient to issue the command `pip install -r requirements.txt` (better if done in an Anaconda environment).
+The complete list of the packages used in the virtual environment is in [`requirements.txt`](https://github.com/nihil21/custom-svm/blob/master/requirements.txt); to install all those modules, it is sufficient to issue the command `pip install -r requirements.txt` (better if done in an Anaconda environment).
 
 ### Design and Implementation: Overview
 
