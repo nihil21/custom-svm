@@ -2,7 +2,7 @@
 Custom implementation of Support Vector Machines using Python and NumPy, as part of the Combinatorial Decision Making and Optimization university course (Master in Artificial Intelligence, Alma Mater Studiorum - University of Bologna).
 
 ### Authors
-[Mattia Orlandi](https://github.com/nihil21)
+[Mattia Orlandi](https://github.com/nihil21)  
 [Lorenzo Mario Amorosa](https://github.com/Lostefra)
 
 ### Requirements
@@ -12,7 +12,7 @@ This project requires the following libraries:
 - `scikit-learn` for generating and splitting the dataset, to assess accuracy, and to confront our implementation with SVC;
 - `matplotlib` for plotting graphs.
 
-The complete list of the packages used in the virtual environment is in [`custom-svm/svm.py`](https://github.com/nihil21/custom-svm/blob/master/requirements.txt); to install all those modules, it is sufficient to issue the command `pip install -r requirements.txt`.
+The complete list of the packages used in the virtual environment is in [`custom-svm/svm.py`](https://github.com/nihil21/custom-svm/blob/master/requirements.txt); to install all those modules, it is sufficient to issue the command `pip install -r requirements.txt` (better if done in an Anaconda environment).
 
 ### Design and Implementation: Overview
 
