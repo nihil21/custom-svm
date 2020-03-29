@@ -22,6 +22,8 @@ The repository is structured in the following way:
  - the notebook [`custom-svm/svm_usecase.ipynb`](https://github.com/nihil21/custom-svm/blob/master/custom-svm/svm_usecase.ipynb) shows the usage of the SVM for many different purposes.
  - the package [`custom-svm/data`](https://github.com/nihil21/custom-svm/tree/master/custom-svm/data) contains generators and datasets.
 
+We provided also a script version of the Jupyter notebook which can be run either in a terminal or in Spyder (recommended). For more clarity, it is suggested to at least read the notebook comments.
+
 ### Lagrangian Formulation of the SVM and Optimization
 
 The Lagrangian problem for SVM is formulated as follows:
