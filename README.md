@@ -167,7 +167,7 @@ In the [`python code`](https://github.com/nihil21/custom-svm/blob/master/custom-
  ```python
          y_predict = 0
          for lamda, sv_X, sv_y in zip(self.lambdas, self.sv_X, self.sv_y):
-                 y_predict += lambda * sv_y * self.kernel_fn(X, sv_X)
+                 y_predict += lamda * sv_y * self.kernel_fn(X, sv_X)
          y_predict = np.sign(y_predict + self.b)
 ```
 
