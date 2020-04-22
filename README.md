@@ -84,7 +84,7 @@ It is now necessary to convert the numpy arrays that express the optimization pr
  - ![LaTeX image not found :(](res/inline5.gif?raw=true) the label vector of size m×1
  - ![LaTeX image not found :(](res/inline6.gif?raw=true) a scalar  
 
-It has to be noticed that in case of hard margin the constraints on the upper bound of the Lagrangian multipliers are not given, hence ![](res/G.gif?raw=true) and ![](res/h.gif?raw=true) are smaller in that case.  
+It has to be noticed that in case of hard margin the constraints on the upper bound of the Lagrangian multipliers are not given, hence ![](res/G.gif?raw=true) and ![](res/small_h.gif?raw=true) are smaller in that case.  
 
 #### Kernel trick
 Since the hyperplane is a linear function, the SVM model defined so far is suited only to linearly separable datasets, which is not very useful in real-world scenarios.  
