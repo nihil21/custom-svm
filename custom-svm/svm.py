@@ -2,7 +2,7 @@ import numpy as np
 import itertools
 import cvxopt
 from matplotlib import pyplot as plt
-from typing import Optional
+import typing
 import warnings
 
 
@@ -28,11 +28,11 @@ class SVM:
         is_fit --- boolean variable indicating whether the SVM is fit or not"""
 
     def __init__(self,
-                 kernel: Optional[str] = 'linear',
-                 gamma: Optional[float] = None,
-                 deg: Optional[int] = 3,
-                 r: Optional[float] = 0.,
-                 C: Optional[float] = 1.):
+                 kernel: str = 'linear',
+                 gamma: typing.Optional[float] = None,
+                 deg: int = 3,
+                 r: float = 0.,
+                 C: float = 1.):
         """Initializes the SVM object by setting the kernel function, its parameters and the soft margin;
         moreover, it sets to None the matrices of lagrangian multipliers and support vectors.
             :param kernel: string representing the kernel type ('linear'/'rbf'/'poly'/'sigmoid'); by default it is
@@ -69,7 +69,7 @@ class SVM:
 
         self.is_fit = False
 
-    def fit(self, X: np.ndarray, y: np.ndarray, verbosity: Optional[int] = 1):
+    def fit(self, X: np.ndarray, y: np.ndarray, verbosity: int = 1):
         # If 'verbosity' is outside range (0-3), set it to default (1)
         if verbosity not in {0, 1, 2}:
             verbosity = 1
@@ -152,8 +152,8 @@ class SVM:
 
     def project(self,
                 X: np.ndarray,
-                i: Optional[int] = None,
-                j: Optional[int] = None):
+                i: typing.Optional[int] = None,
+                j: typing.Optional[int] = None):
         # If the model is not fit, raise an exception
         if not self.is_fit:
             raise SVMNotFitError
@@ -181,10 +181,10 @@ class SVM:
     def plot2D(self,
                X: np.ndarray,
                y: np.ndarray,
-               x_min: Optional[float] = None,
-               x_max: Optional[float] = None,
-               y_min: Optional[float] = None,
-               y_max: Optional[float] = None):
+               x_min: typing.Optional[float] = None,
+               x_max: typing.Optional[float] = None,
+               y_min: typing.Optional[float] = None,
+               y_max: typing.Optional[float] = None):
         # Get indexes of positive and negative labels
         is_pos = y > 0
         is_neg = y < 0
@@ -240,7 +240,7 @@ class SVM:
             # If the kernel is linear and 'w' is defined, the hyperplane can be plotted using 'w' and 'b'
             if self.w is not None:
                 # Function representing the hyperplane
-                def f(x: np.ndarray, w_0: float, w_1: float, b: float, c: Optional[float] = 0):
+                def f(x: np.ndarray, w_0: float, w_1: float, b: float, c: float = 0):
                     return -(w_0 * x + b - c)/w_1
 
                 # Plot the hyperplane
