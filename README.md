@@ -12,17 +12,15 @@ This project requires the following libraries:
 - `scikit-learn` for generating and splitting the dataset, to assess accuracy, and to confront our implementation with SVC;
 - `matplotlib` for plotting graphs.
 
-The complete list of the packages used in the virtual environment is in [`requirements.txt`](https://github.com/nihil21/custom-svm/blob/master/requirements.txt); to install all those modules, it is sufficient to issue the command `pip install -r requirements.txt` (better if done in an Anaconda environment).
-
 ### Design and Implementation: Overview
 
 The repository is structured in the following way:
- - the module [`custom-svm/svm.py`](https://github.com/nihil21/custom-svm/blob/master/custom-svm/svm.py) contains the implementation of SVM for binary classification, with support to kernel functions and soft margin.  
- - the module [`custom-svm/multiclass_svm.py`](https://github.com/nihil21/custom-svm/blob/master/custom-svm/multiclass_svm.py) contains the implementation of SVM for multiclass classification.
- - the notebook [`custom-svm/svm_usecase.ipynb`](https://github.com/nihil21/custom-svm/blob/master/custom-svm/svm_usecase.ipynb) shows the usage of the SVM for many different purposes.
- - the package [`custom-svm/data`](https://github.com/nihil21/custom-svm/tree/master/custom-svm/data) contains generators and datasets.
+ - the module [`src/svm.py`](https://github.com/nihil21/custom-svm/blob/master/src/svm.py) contains the implementation of SVM for binary classification, with support to kernel functions and soft margin.  
+ - the module [`src/multiclass_svm.py`](https://github.com/nihil21/custom-svm/blob/master/src/multiclass_svm.py) contains the implementation of SVM for multiclass classification.
+ - the notebook [`src/svm_usecase.ipynb`](https://github.com/nihil21/custom-svm/blob/master/src/svm_usecase.ipynb) shows the usage of the SVM for many different purposes.
+ - the package [`src/data`](https://github.com/nihil21/custom-svm/tree/master/data) contains generators and datasets.
 
-We provided also a script version ([`custom-svm/svm_usecase.py`](https://github.com/nihil21/custom-svm/tree/master/custom-svm/svm_usecase.py)) of the Jupyter notebook which can be run either in a terminal or in Spyder (recommended). For more clarity, it is suggested to at least read the notebook comments.
+We provided also a script version ([`src/svm_usecase.py`](https://github.com/nihil21/custom-svm/tree/master/src/svm_usecase.py)) of the Jupyter notebook which can be run either in a terminal or in Spyder (recommended). For more clarity, it is suggested to at least read the notebook comments.
 
 ### Lagrangian Formulation of the SVM and Optimization
 
@@ -108,7 +106,7 @@ where $K$ is called *kernel function*, and it can be:
 - radial basis function;
 - sigmoid.
 
-In the [`python code`](https://github.com/nihil21/custom-svm/blob/master/custom-svm/svm.py) the parameters needed by the solver are defined as follows, using the guideline previously provided:
+In the [`python code`](https://github.com/nihil21/custom-svm/blob/master/src/svm.py) the parameters needed by the solver are defined as follows, using the guideline previously provided:
 ```python
         K = np.zeros(shape=(n_samples, n_samples))
         for i, j in itertools.product(range(n_samples), range(n_samples)):
@@ -149,7 +147,7 @@ And given $S$ as the set of the support vectors:
 
 $$ b = \frac{1}{N_S}\sum_{s \in S} \left(y_s - \sum_{m \in S} \lambda_m y_m K(\mathbf{x}_m, \mathbf{x}_s) \right) $$
 
-In the [`python code`](https://github.com/nihil21/custom-svm/blob/master/custom-svm/svm.py) the computation is made as follows:
+In the [`python code`](https://github.com/nihil21/custom-svm/blob/master/src/svm.py) the computation is made as follows:
 ```python
         self.w = np.zeros(n_features)
         for i in range(len(self.lambdas)):
@@ -170,7 +168,7 @@ An input $\mathbf{x}$ is assignment to a class label $y$ with the following form
 
 $$ y = \text{sgn} \left( \sum_{i=1}^n \lambda_i y_i K(\mathbf{x}_i, \mathbf{x}) + b \right) $$
 
-In [`code`](https://github.com/nihil21/custom-svm/blob/master/custom-svm/svm.py):   
+In [`code`](https://github.com/nihil21/custom-svm/blob/master/src/svm.py):   
 
 ```python
         y_predict = 0
@@ -181,9 +179,9 @@ In [`code`](https://github.com/nihil21/custom-svm/blob/master/custom-svm/svm.py)
 
 ### SVM for Multiclass Classification
 
-The module [`multiclass_svm.py`](https://github.com/nihil21/custom-svm/blob/master/custom-svm/multiclass_svm.py) contains the implementation of Support Vector Machine for multi-classification purposes based on **one-vs-one strategy**.  
+The module [`multiclass_svm.py`](https://github.com/nihil21/custom-svm/blob/master/src/multiclass_svm.py) contains the implementation of Support Vector Machine for multi-classification purposes based on **one-vs-one strategy**.  
 It offers full support to **kernel functions** and **soft margin**, in fact the signature of its `__init__` method is the same of the binary `SVM`.    
-Given $N$ different classes to classify, the algorithm provides $N(N-1)/2$ SVM binary classifiers from the module [`svm.py`](https://github.com/nihil21/custom-svm/blob/master/custom-svm/svm.py).   
+Given $N$ different classes to classify, the algorithm provides $N(N-1)/2$ SVM binary classifiers from the module [`svm.py`](https://github.com/nihil21/custom-svm/blob/master/src/svm.py).   
 **Each classifier** is **trained** to correctly classify **2 of the N** given **classes**. In the training process there are used only the entries in the dataset to which it corresponds a label of the 2 classes.   
 Given an unseen example, the **prediction** of the class is computed deploying a **voting schema** among the binary `SVM` classifiers.   
 The voting process is based on the standard `predict` function for binary `SVM` classifiers, so the tested entry is assigned to the class which wins the highest number of binary comparisons. In addition, it is available a mechanism to **counteract** the possible risk of **draw** in voting, based on the raw values predicted by the binary classifiers before the application of 'sign' function.

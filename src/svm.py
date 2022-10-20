@@ -27,12 +27,14 @@ class SVM:
         hard margin is employed (no tolerance towards misclassified samples)
         is_fit --- boolean variable indicating whether the SVM is fit or not"""
 
-    def __init__(self,
-                 kernel: str = 'linear',
-                 gamma: typing.Optional[float] = None,
-                 deg: int = 3,
-                 r: float = 0.,
-                 C: float = 1.):
+    def __init__(
+            self,
+            kernel: str = 'linear',
+            gamma: typing.Optional[float] = None,
+            deg: int = 3,
+            r: float = 0.,
+            C: float = 1.
+    ):
         """Initializes the SVM object by setting the kernel function, its parameters and the soft margin;
         moreover, it sets to None the matrices of lagrangian multipliers and support vectors.
             :param kernel: string representing the kernel type ('linear'/'rbf'/'poly'/'sigmoid'); by default it is
@@ -43,7 +45,7 @@ class SVM:
             :param r: optional floating point representing the r parameter of 'poly' and 'sigmoid' kernel functions
             :param C: non-negative float regulating the trade-off between the amount of misclassified samples and
             the size of the margin"""
-        # Lagrangian multipliers, hyper-parameters and support vectors are initially set to None
+        # Lagrangian's multipliers, hyperparameters and support vectors are initially set to None
         self.lambdas = None
         self.sv_X = None
         self.sv_y = None
@@ -150,10 +152,12 @@ class SVM:
             print('Bias of the hyper-plane: {0:.3f}'.format(self.b))
             print('Weights of the hyper-plane:', self.w)
 
-    def project(self,
-                X: np.ndarray,
-                i: typing.Optional[int] = None,
-                j: typing.Optional[int] = None):
+    def project(
+            self,
+            X: np.ndarray,
+            i: typing.Optional[int] = None,
+            j: typing.Optional[int] = None
+    ):
         # If the model is not fit, raise an exception
         if not self.is_fit:
             raise SVMNotFitError
@@ -178,13 +182,15 @@ class SVM:
         # To predict the point label, only the sign of f(x) is considered
         return np.sign(self.project(X))
 
-    def plot2D(self,
-               X: np.ndarray,
-               y: np.ndarray,
-               x_min: typing.Optional[float] = None,
-               x_max: typing.Optional[float] = None,
-               y_min: typing.Optional[float] = None,
-               y_max: typing.Optional[float] = None):
+    def plot2D(
+            self,
+            X: np.ndarray,
+            y: np.ndarray,
+            x_min: typing.Optional[float] = None,
+            x_max: typing.Optional[float] = None,
+            y_min: typing.Optional[float] = None,
+            y_max: typing.Optional[float] = None
+    ):
         # Get indexes of positive and negative labels
         is_pos = y > 0
         is_neg = y < 0
