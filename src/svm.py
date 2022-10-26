@@ -15,42 +15,42 @@ class SVM:
 
     Parameters
     ----------
-    kernel: str, default="linear"
-        Type of kernel function ("linear", "rbf", "poly" or "sigmoid").
-    gamma: float | None, default=None
+    kernel : {"linear", "rbf", "poly", "sigmoid"}
+        Type of kernel function.
+    gamma : float | None, default=None
         Value representing the gamma parameter of the kernel; if None, it will be computed automatically during fit.
-    deg: int, default=3
+    deg : int, default=3
         Value representing the degree of the "poly" kernel function.
-    r: float, default=0.
+    r : float, default=0.
         Value representing the r parameter of "poly" and "sigmoid" kernel functions.
-    c: float | None, default=1.
+    c : float | None, default=1.
         Value regulating the trade-off between the amount of misclassified samples and the size of the margin
         (its "softness" decreases as C increases); if None, hard margin is employed (no tolerance towards
         misclassified samples).
 
     Attributes
     ----------
-    _kernel: str
-        Type of kernel function ("linear", "rbf", "poly" or "sigmoid").
-    _kernel_fn: Callable[[np.ndarray, np.ndarray], float]
+    _kernel : {"linear", "rbf", "poly", "sigmoid"}
+        Type of kernel function.
+    _kernel_fn : function
         Kernel function.
-    _gamma: float | None
+    _gamma : float | None
         Value representing the gamma parameter of the kernel; if None, it will be computed automatically during fit.
-    _lambdas: np.ndarray | None
+    _lambdas : ndarray | None
         Lagrangian multipliers.
-    _sv_x: np.ndarray | None
+    _sv_x : ndarray | None
         Support vectors related to X.
-    _sv_y: np.ndarray | None
+    _sv_y : ndarray | None
         Support vectors related to y.
-    _w: np.ndarray | None
+    _w : ndarray | None
         Matrix of hyperplane parameters.
-    _b: float | None
+    _b : float | None
         Hyperplane bias.
-    _c: float | None
+    _c : float | None
         Value regulating the trade-off between the amount of misclassified samples and the size of the margin
         (its "softness" decreases as C increases); if None, hard margin is employed (no tolerance towards
         misclassified samples).
-    _is_fit: bool
+    _is_fit : bool
         Whether the SVM is fit or not.
     """
 
@@ -93,11 +93,11 @@ class SVM:
 
         Parameters
         ----------
-        x: np.ndarray
+        x : ndarray
             Training data with shape (n_samples, n_features).
-        y: np.ndarray
+        y : ndarray
             Ground-truth labels.
-        verbosity: int, default=1
+        verbosity : int, default=1
             Verbosity level in range [0, 3].
         """
         # If "verbosity" is outside range [0, 3], set it to default (1)
@@ -193,16 +193,16 @@ class SVM:
 
         Parameters
         ----------
-        x: np.ndarray
+        x : ndarray
             Data points with shape (n_samples, n_features).
-        i: int | None, default=None
+        i : int | None, default=None
             First dimension to plot (in the case of non-linear kernels).
-        j: int | None, default=None
+        j : int | None, default=None
             Second dimension to plot (in the case of non-linear kernels).
 
         Returns
         -------
-        proj: np.ndarray
+        ndarray
             Projection of the points on the hyperplane.
         """
         # If the model is not fit, raise an exception
@@ -230,12 +230,12 @@ class SVM:
 
         Parameters
         ----------
-        x: np.ndarray
+        x : ndarray
             Data points with shape (n_samples, n_features).
 
         Returns
         -------
-        label: np.ndarray
+        ndarray
             Predicted labels.
         """
         # To predict the point label, only the sign of f(x) is considered
@@ -254,17 +254,17 @@ class SVM:
 
         Parameters
         ----------
-        x: np.ndarray
+        x : ndarray
             Data points with shape (n_samples, n_features).
-        y: np.ndarray
+        y : ndarray
             Ground-truth labels.
-        x_min: float | None, default=None
+        x_min : float | None, default=None
             Maximum x coordinate for the plot.
-        x_max: float | None, default=None
+        x_max : float | None, default=None
             Minimum x coordinate for the plot.
-        y_min: float | None, default=None
+        y_min : float | None, default=None
             Maximum y coordinate for the plot.
-        y_max: float | None, default=None
+        y_max : float | None, default=None
             Minimum y coordinate for the plot.
         """
         # Get indexes of positive and negative labels
@@ -371,4 +371,5 @@ class SVM:
 
 class SVMNotFitError(Exception):
     """Exception raised when the "project" or the "predict" method of an SVM object is called without fitting
-    the model beforehand."""
+    the model beforehand.
+    """
