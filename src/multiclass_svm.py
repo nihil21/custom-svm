@@ -71,7 +71,7 @@ class MulticlassSVM:
         self._support_vectors = set()
 
     def fit(self, x: np.ndarray, y: np.ndarray) -> None:
-        """
+        """Fit the SVM on the given training set.
 
         Parameters
         ----------
@@ -110,15 +110,25 @@ class MulticlassSVM:
                 self._svm_list.append(svm_tuple)
         print('{0:d} support vectors found out of {1:d} data points'.format(len(self._support_vectors), len(x)))
 
-    def predict(self, x: np.ndarray):
-        """The voting process is based on the standard predict function for binary SVM classifiers, so the input entry
-           is assigned to the class which wins the highest number of binary comparisons.
-           Anyway, to counteract the possible risk of draw, the predicted value before the application of 'sign'
-           function in binary classifiers is stored as well. These latter values are used to deal with draws.
-           For each sample j, for each label i:
-           - voting_schema[j][0][i] is the number of total comparisons won
-           - voting_schema[j][1][i] is the cumulative sum of predicted values"""
+    def predict(self, x: np.ndarray) -> np.ndarray:
+        """Predict the class of the given data points. The voting process is based on the standard predict function
+        for binary SVM classifiers, so the input entry is assigned to the class which wins the highest number of binary
+        comparisons; to counteract the possible risk of draw, the predicted value before the application of the "sign"
+        function in binary classifiers is stored as well.
+        For each sample j, for each label i:
+            - voting_schema[j][0][i] is the number of total comparisons won
+            - voting_schema[j][1][i] is the cumulative sum of predicted values
 
+        Parameters
+        ----------
+        x : ndarray
+            Data points with shape (n_samples, n_features).
+
+        Returns
+        -------
+        ndarray
+            Results of the voting scheme.
+        """
         voting_schema = np.zeros([len(x), 2, self._labels.shape[0]], dtype=float)
         for svm_tuple in self._svm_list:
             prediction = svm_tuple[0].project(x)

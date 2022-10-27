@@ -60,7 +60,7 @@ class SVM:
             gamma: float | None = None,
             deg: int = 3,
             r: float = 0.,
-            c: float = 1.
+            c: float | None = 1.
     ):
         # Lagrangian's multipliers, hyperparameters and support vectors are initially set to None
         self._lambdas = None

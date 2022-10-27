@@ -3,7 +3,7 @@ import random as rnd
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import colors
-import matplotlib.patches as mpatches
+import matplotlib.patches as m_patches
 
 
 def create_10_rooms():
@@ -99,7 +99,7 @@ def create_colors():
     fill_color(colors_np, colors_str)
 
     for k, color_str in enumerate(colors_str):
-        color_patches.append(mpatches.Patch(color=color_str, label='Room' + str(k)))
+        color_patches.append(m_patches.Patch(color=color_str, label='Room' + str(k)))
 
     return colors_np, color_patches
 
