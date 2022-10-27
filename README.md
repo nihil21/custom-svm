@@ -18,7 +18,7 @@ The repository is structured in the following way:
  - the module [`src/svm.py`](https://github.com/nihil21/custom-svm/blob/master/src/svm.py) contains the implementation of SVM for binary classification, with support to kernel functions and soft margin.  
  - the module [`src/multiclass_svm.py`](https://github.com/nihil21/custom-svm/blob/master/src/multiclass_svm.py) contains the implementation of SVM for multiclass classification.
  - the notebook [`src/svm_usecase.ipynb`](https://github.com/nihil21/custom-svm/blob/master/src/svm_usecase.ipynb) shows the usage of the SVM for many different purposes.
- - the package [`src/data`](https://github.com/nihil21/custom-svm/tree/master/data) contains generators and datasets.
+ - the package [`src/data`](https://github.com/nihil21/custom-svm/tree/master/src/data) contains generators and datasets.
 
 We provided also a script version ([`src/svm_usecase.py`](https://github.com/nihil21/custom-svm/tree/master/src/svm_usecase.py)) of the Jupyter notebook which can be run either in a terminal or in Spyder (recommended). For more clarity, it is suggested to at least read the notebook comments.
 
