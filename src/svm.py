@@ -154,7 +154,10 @@ class SVM:
         lambdas = np.ravel(sol["x"])
         # Find indices of the support vectors, which have non-zero Lagrange multipliers, and save the support vectors
         # as instance attributes
-        is_sv = lambdas > 1e-5
+        if self._c:
+            is_sv = (lambdas >= 1e-5) & (lambdas <= self._c)
+        else:
+            is_sv = lambdas >= 1e-5
         self._sv_x = x[is_sv]
         self._sv_y = y[is_sv]
         self._lambdas = lambdas[is_sv]
