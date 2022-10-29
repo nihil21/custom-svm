@@ -17,13 +17,13 @@ class SVM:
     ----------
     kernel : {"linear", "rbf", "poly", "sigmoid"}
         Type of kernel function.
-    gamma : float | None, default=None
+    gamma : float or None, default=None
         Value representing the gamma parameter of the kernel; if None, it will be computed automatically during fit.
     deg : int, default=3
         Value representing the degree of the "poly" kernel function.
     r : float, default=0.
         Value representing the r parameter of "poly" and "sigmoid" kernel functions.
-    c : float | None, default=1.
+    c : float or None, default=1.
         Value regulating the trade-off between the amount of misclassified samples and the size of the margin
         (its "softness" decreases as C increases); if None, hard margin is employed (no tolerance towards
         misclassified samples).
@@ -34,19 +34,19 @@ class SVM:
         Type of kernel function.
     _kernel_fn : function
         Kernel function.
-    _gamma : float | None
+    _gamma : float or None
         Value representing the gamma parameter of the kernel; if None, it will be computed automatically during fit.
-    _lambdas : ndarray | None
+    _lambdas : ndarray or None
         Lagrangian multipliers.
-    _sv_x : ndarray | None
+    _sv_x : ndarray or None
         Support vectors related to X.
-    _sv_y : ndarray | None
+    _sv_y : ndarray or None
         Support vectors related to y.
-    _w : ndarray | None
+    _w : ndarray or None
         Matrix of hyperplane parameters.
-    _b : float | None
+    _b : float or None
         Hyperplane bias.
-    _c : float | None
+    _c : float or None
         Value regulating the trade-off between the amount of misclassified samples and the size of the margin
         (its "softness" decreases as C increases); if None, hard margin is employed (no tolerance towards
         misclassified samples).
@@ -198,9 +198,9 @@ class SVM:
         ----------
         x : ndarray
             Data points with shape (n_samples, n_features).
-        i : int | None, default=None
+        i : int or None, default=None
             First dimension to plot (in the case of non-linear kernels).
-        j : int | None, default=None
+        j : int or None, default=None
             Second dimension to plot (in the case of non-linear kernels).
 
         Returns
@@ -261,13 +261,13 @@ class SVM:
             Data points with shape (n_samples, n_features).
         y : ndarray
             Ground-truth labels.
-        x_min : float | None, default=None
+        x_min : float or None, default=None
             Maximum x coordinate for the plot.
-        x_max : float | None, default=None
+        x_max : float or None, default=None
             Minimum x coordinate for the plot.
-        y_min : float | None, default=None
+        y_min : float or None, default=None
             Maximum y coordinate for the plot.
-        y_max : float | None, default=None
+        y_max : float or None, default=None
             Minimum y coordinate for the plot.
         """
         # Get indexes of positive and negative labels

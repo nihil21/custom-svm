@@ -16,13 +16,13 @@ class MulticlassSVM:
     ----------
     kernel : {"linear", "rbf", "poly", "sigmoid"}
         Type of kernel function.
-    gamma : float | None, default=None
+    gamma : float or None, default=None
         Value representing the gamma parameter of the kernel; if None, it will be computed automatically during fit.
     deg : int, default=3
         Value representing the degree of the "poly" kernel function.
     r : float, default=0.
         Value representing the r parameter of "poly" and "sigmoid" kernel functions.
-    c : float | None, default=1
+    c : float or None, default=1
         Value regulating the trade-off between the amount of misclassified samples and the size of the margin
         (its "softness" decreases as C increases); if None, hard margin is employed (no tolerance towards
         misclassified samples).
@@ -31,13 +31,13 @@ class MulticlassSVM:
     ----------
     _kernel : {"linear", "rbf", "poly", "sigmoid"}
         Type of kernel function.
-    _gamma : float | None
+    _gamma : float or None
         Value representing the gamma parameter of the kernel; if None, it will be computed automatically during fit.
     _deg : int
         Value representing the degree of the "poly" kernel function.
     _r : float
         Value representing the r parameter of "poly" and "sigmoid" kernel functions.
-    _c : float | None
+    _c : float or None
         Value regulating the trade-off between the amount of misclassified samples and the size of the margin
         (its "softness" decreases as C increases); if None, hard margin is employed (no tolerance towards
         misclassified samples).
@@ -45,7 +45,7 @@ class MulticlassSVM:
         List of triplets, each one comprising the SVM binary classifier, the label of the 1st class and the label of
         the 2nd class (1st class corresponds to sign "-", 2nd class corresponds to sign "+"); the number of binary
         SVM classifiers needed will be known only when the dataset labels are given.
-    _labels : ndarray | None
+    _labels : ndarray or None
         Integer labels.
     _support_vectors : set of tuple of (float, float)
         Set of support vectors.
