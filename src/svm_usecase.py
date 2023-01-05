@@ -27,17 +27,19 @@
 
 # In[1]:
 import matplotlib.pyplot as plt
-from IPython import get_ipython
 from sklearn.metrics import accuracy_score
 from sklearn.svm import SVC
+from sklearnex import patch_sklearn
 
 from data.sample_data_generator import *
 from multiclass_svm import MulticlassSVM
 from svm import SVM
 
-get_ipython().run_line_magic('matplotlib', 'inline')
 np.set_printoptions(precision=3)
 np.set_printoptions(suppress=True)
+
+# Use Intel-optimized Scikit-learn
+patch_sklearn()
 
 RND = 42
 N_SAMP = 200
